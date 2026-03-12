@@ -23,9 +23,11 @@ jobs:
           ROOT_REPOSITORY: Juyas/Margas
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAVEN_WRAPPER_DIR: '~/.m2/wrapper'
+          EXCLUDE_PATHS: |
+            docs
 
-  build:
-    name: Build
+  build-code:
+    name: Build Code
     needs: [ prepare ]
     runs-on: ubuntu-latest
 
