@@ -1,0 +1,64 @@
+name: Build
+on: [ push, pull_request ]
+
+jobs:
+  prepare:
+    name: Prepare Build Variables
+    runs-on: ubuntu-latest
+
+    outputs:
+      VERSION: ${{ steps.version.outputs.VERSION }}
+      VERSION_TYPE: ${{ steps.version.outputs.VERSION_TYPE }}
+      VERSION_MAVEN: ${{ steps.version.outputs.VERSION_MAVEN }}
+      VERSION_IS_NEW: ${{ steps.version.outputs.VERSION_IS_NEW }}
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: BetonQuest/Workflows/.github/actions/version@main
+        id: version
+        with:
+          ROOT_REPOSITORY: Juyas/Margas
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_WRAPPER_DIR: '~/.m2/wrapper'
+
+  build:
+    name: Build
+    needs: [ prepare ]
+    runs-on: ubuntu-latest
+
+    env:
+      VERSION: ${{ needs.prepare.outputs.VERSION }}
+      VERSION_TYPE: ${{ needs.prepare.outputs.VERSION_TYPE }}
+      VERSION_MAVEN: ${{ needs.prepare.outputs.VERSION_MAVEN }}
+      VERSION_IS_NEW: ${{ needs.prepare.outputs.VERSION_IS_NEW }}
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+      - uses: BetonQuest/Workflows/.github/actions/setup-java-maven@main
+        with:
+          JAVA_OVERRIDE: '21'
+          JAVA_CACHE: 'maven'
+          MAVEN_BUILD_DIR: 'target/code'
+          MAVEN_WRAPPER_DIR: '~/.m2/wrapper'
+      - uses: BetonQuest/Workflows/.github/actions/replace-code-variables@main
+        with:
+          VERSION: ${{ env.VERSION }}
+          VERSION_TYPE: ${{ env.VERSION_TYPE }}
+          VERSION_NAMESPACE: "margas-plugin"
+      - name: Build with Maven. Phase 'verify'
+        shell: bash --noprofile --norc -euo pipefail {0}
+        run: |
+          if [ $VERSION_TYPE == 'release' ]; then CHANGELIST=-Dchangelist=; fi
+          ./mvnw ${CHANGELIST-} -B verify
+          git diff > target/code/changes.patch
+      - name: Upload Code
+        uses: actions/upload-artifact@v7
+        with:
+          name: Margas-Code
+          path: |
+            target/code/Margas.jar
+            target/code/margas-plugin-*-*.jar
