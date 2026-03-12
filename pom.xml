@@ -11,7 +11,7 @@
   </parent>
 
   <groupId>de.juyas</groupId>
-  <artifactId>Margas</artifactId>
+  <artifactId>margas-plugin</artifactId>
   <version>${revision}${changelist}</version>
   <description>A minecraft plugin allowing custom regionalized mob spawning and looting</description>
 
@@ -124,71 +124,5 @@
       </exclusions>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce-banned-dependencies</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <bannedDependencies>
-                  <excludes>
-                    <exclude>org.spigotmc</exclude>
-                    <exclude>org.bukkit</exclude>
-                  </excludes>
-                </bannedDependencies>
-              </rules>
-              <fail>true</fail>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-jar-files</id>
-            <phase>package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target name="copy .jar files to root">
-                <copy toDir="../../target/code"
-                      overwrite="true"
-                      quiet="true"
-                      verbose="true"
-                      failonerror="false"
-                      preservelastmodified="true">
-                  <fileset dir="../">
-                    <include name="*/target/code/*.jar"/>
-                  </fileset>
-                  <filtermapper>
-                    <replacestring from="target/code/" to=""/>
-                  </filtermapper>
-                </copy>
-                <copy file="${project.build.directory}/${project.name}.jar"
-                      tofile="../../target/code/Courier.jar"
-                      overwrite="true"
-                      quiet="true"
-                      verbose="true"
-                      failonerror="false"
-                      preservelastmodified="true"/>
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
