@@ -1,0 +1,5 @@
+main: de.juyas.margas.MargasPlugin
+name: Margas
+version: '${project.version}'
+author: Juyas
+api-version: '1.21'
