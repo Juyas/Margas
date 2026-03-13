@@ -1,6 +1,7 @@
 package de.juyas.margas.api;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -66,9 +67,44 @@ public enum MargasType {
      * @param name        the name of the type
      * @param sectionName the section name of the type
      */
-    MargasType(String name, String sectionName) {
+    MargasType(final String name, final String sectionName) {
         this.name = name;
         this.sectionName = sectionName;
+    }
+
+    /**
+     * Returns the type by the given name.
+     *
+     * @param name the name of the type to get
+     * @return the type or null if not found
+     */
+    public static MargasType getByName(final String name) {
+        return BY_NAME.get(name.toLowerCase(Locale.ROOT));
+    }
+
+    /**
+     * Returns the type by the given section name.
+     *
+     * @param sectionName the section name
+     * @return the type or null if not found
+     */
+    public static MargasType getBySectionName(final String sectionName) {
+        return BY_SECTION_NAME.get(sectionName.toLowerCase(Locale.ROOT));
+    }
+
+    /**
+     * Creates a lookup map for the given key extractor.
+     * Used only internally.
+     *
+     * @param keyExtractor the key extractor function
+     * @return the lookup map
+     */
+    private static Map<String, MargasType> createLookupMap(final Function<MargasType, String> keyExtractor) {
+        return Arrays.stream(values())
+                .collect(Collectors.toUnmodifiableMap(
+                        type -> keyExtractor.apply(type).toLowerCase(Locale.ROOT),
+                        Function.identity()
+                ));
     }
 
     /**
@@ -87,41 +123,6 @@ public enum MargasType {
      */
     public String getSectionName() {
         return sectionName;
-    }
-
-    /**
-     * Returns the type by the given name.
-     *
-     * @param name the name of the type to get
-     * @return the type or null if not found
-     */
-    public static MargasType getByName(String name) {
-        return BY_NAME.get(name.toLowerCase());
-    }
-
-    /**
-     * Returns the type by the given section name.
-     *
-     * @param sectionName the section name
-     * @return the type or null if not found
-     */
-    public static MargasType getBySectionName(String sectionName) {
-        return BY_SECTION_NAME.get(sectionName.toLowerCase());
-    }
-
-    /**
-     * Creates a lookup map for the given key extractor.
-     * Used only internally.
-     *
-     * @param keyExtractor the key extractor function
-     * @return the lookup map
-     */
-    private static Map<String, MargasType> createLookupMap(Function<MargasType, String> keyExtractor) {
-        return Arrays.stream(values())
-                .collect(Collectors.toUnmodifiableMap(
-                        type -> keyExtractor.apply(type).toLowerCase(),
-                        Function.identity()
-                ));
     }
 
 }
