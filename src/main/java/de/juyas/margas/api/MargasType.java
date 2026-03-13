@@ -10,11 +10,34 @@ import java.util.stream.Collectors;
  */
 public enum MargasType {
 
+    /**
+     * This type represents an entity that supposed to be spawned in margas areas.
+     */
     CREATURE("mob", "mobs"),
+
+    /**
+     * This type represents an item that supposed to be used in margas areas as loot or equipment.
+     */
     ITEM("item", "items"),
+
+    /**
+     * This type represents a margas area.
+     */
     AREA("area", "areas"),
+
+    /**
+     * This type represents a chest that be placed in margas areas and populated with items for players to loot.
+     */
     CHEST("chest", "chests"),
+
+    /**
+     * This type represents a key that be treated as loot as well as a key to open loot chests.
+     */
     CHEST_KEY("key", "chest-keys"),
+
+    /**
+     * This type represents a loot table that be used to randomly generate items and manipulate the chances.
+     */
     LOOT_TABLE("table", "loot-tables");
 
     /**
