@@ -1,9 +1,14 @@
 package de.juyas.margas.api;
 
+import java.io.Serial;
+
 /**
  * Class MargasException to generalize all exceptions thrown by the plugin.
  */
 public class MargasException extends Exception {
+
+    @Serial
+    private static final long serialVersionUID = 2526537629923892824L;
 
     /**
      * Creates a new instance of MargasException.
