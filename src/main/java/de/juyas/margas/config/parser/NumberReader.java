@@ -10,19 +10,45 @@ import java.util.function.Supplier;
 /**
  * Class NumberReader to read a number from a configuration section at a given path allowing different formats.
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class NumberReader implements ConfigSectionReader<Number> {
 
+    /**
+     * Pattern to check if a string is a valid integer.
+     */
     private static final String INTEGER_PATTERN = "^[0-9]+$";
 
+    /**
+     * Pattern to check if a string is a valid double.
+     */
     private static final String DOUBLE_PATTERN = "^([0-9]*\\.[0-9]+|[0-9]+\\.[0-9]*)$";
 
+    /**
+     * The field name in the configuration to read the default value.
+     */
     private static final String FIELD_DEFAULT = "default";
 
+    /**
+     * The field name in the configuration to read the number range for random generation.
+     */
     private static final String FIELD_RANGE = "range";
 
+    /**
+     * The field name in the configuration to read the min of the number range for random generation.
+     */
     private static final String FIELD_MIN = "min";
 
+    /**
+     * The field name in the configuration to read the max of the number range for random generation.
+     */
     private static final String FIELD_MAX = "max";
+
+    /**
+     * Creates a new instance of NumberReader.
+     */
+    public NumberReader() {
+        super();
+    }
 
     @Override
     public ValueProvider<Number> read(final ConfigurationSection section, final String path) throws MargasException {
@@ -100,6 +126,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
      * @return the parsed number provider
      * @throws MargasException if the path does not lead to a valid number range section definition
      */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     private ValueProvider<Number> parseRange(final ConfigurationSection section, final String path) throws MargasException {
         final String range = section.getString(path + "." + FIELD_RANGE);
         if (range == null) {

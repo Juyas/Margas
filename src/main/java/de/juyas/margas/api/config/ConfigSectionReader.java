@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
  *
  * @param <T> the type produced by the reader
  */
+@FunctionalInterface
 public interface ConfigSectionReader<T> {
 
     /**
@@ -16,6 +17,7 @@ public interface ConfigSectionReader<T> {
      * @param section the section to read from
      * @param path    the path to read
      * @return the result of the read operation
+     * @throws MargasException if the section or the path is invalid to parse
      */
     ValueProvider<T> read(ConfigurationSection section, String path) throws MargasException;
 
