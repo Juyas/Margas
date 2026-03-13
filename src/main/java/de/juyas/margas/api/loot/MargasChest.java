@@ -6,6 +6,7 @@ import de.juyas.margas.api.MargasType;
 /**
  * Interface MargasChest represents a chest configured in the section for {@link MargasType#CHEST}.
  */
+@FunctionalInterface
 public interface MargasChest extends MargasElement {
 
 }

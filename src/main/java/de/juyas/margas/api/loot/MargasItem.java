@@ -6,6 +6,7 @@ import de.juyas.margas.api.MargasType;
 /**
  * Interface MargasItem represents an item configured in the section {@link MargasType#ITEM}.
  */
+@FunctionalInterface
 public interface MargasItem extends MargasElement {
 
 }

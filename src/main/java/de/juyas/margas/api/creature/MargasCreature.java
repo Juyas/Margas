@@ -6,6 +6,7 @@ import de.juyas.margas.api.MargasType;
 /**
  * Interface MargasCreature represents a creature configured in the section for {@link MargasType#CREATURE}.
  */
+@FunctionalInterface
 public interface MargasCreature extends MargasElement {
 
 }
