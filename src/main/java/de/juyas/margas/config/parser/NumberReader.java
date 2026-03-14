@@ -106,7 +106,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
         final boolean hasMin = section.contains(path + "." + FIELD_MIN);
         final boolean hasMax = section.contains(path + "." + FIELD_MAX);
         if (!hasDefault) {
-            throw new MargasException("Invalid number definition at path '%s'. '%s' is not a valid number section definition, missing `default`.".formatted(path, section.get(path)));
+            throw new MargasException("Invalid number section definition at path '%s'. Missing `default`.".formatted(path));
         }
         if (hasRange) {
             return parseRange(section, path);
@@ -114,7 +114,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
         if (hasMin && hasMax) {
             return parseMinMax(section, path);
         }
-        throw new MargasException("Invalid number definition at path '%s'. '%s' is not a valid number section definition.".formatted(path, section.get(path)));
+        throw new MargasException("Invalid number section definition at path '%s'.".formatted(path));
     }
 
     /**
@@ -150,7 +150,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
             final int min = Integer.parseInt(split[0]);
             final int max = Integer.parseInt(split[1]);
             if (isInvalidIntRange(min, max, def)) {
-                throw new MargasException("Invalid number definition at path '%s'. Range limits are potentially swapped.".formatted(path));
+                throw new MargasException("Invalid integer range definition at path '%s'. Range limits are potentially swapped.".formatted(path));
             }
             return create(balancedIntRandom(min, max), def);
         }
@@ -159,11 +159,11 @@ public class NumberReader implements ConfigSectionReader<Number> {
             final double min = Double.parseDouble(split[0]);
             final double max = Double.parseDouble(split[1]);
             if (isInvalidDoubleRange(min, max, def)) {
-                throw new MargasException("Invalid number definition at path '%s'. Range limits are potentially swapped.".formatted(path));
+                throw new MargasException("Invalid decimal range definition at path '%s'. Range limits are potentially swapped.".formatted(path));
             }
             return create(balancedDoubleRandom(min, max), def);
         }
-        throw new MargasException("Invalid number definition at path '%s'. '%s' is not a valid number-range definition.".formatted(path, section.get(path)));
+        throw new MargasException("Invalid number range definition at path '%s'. '%s' is not a valid number-range definition.".formatted(path, section.get(path)));
     }
 
     /**
@@ -196,7 +196,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
         if (isNumber(section, path + "." + FIELD_DEFAULT) && isNumber(section, path + "." + FIELD_MIN) && isNumber(section, path + "." + FIELD_MAX)) {
             return parseDoubleMinMax(section, path);
         }
-        throw new MargasException("Invalid number definition at path '%s'. '%s' is not a number.".formatted(path, section.get(path)));
+        throw new MargasException("Invalid number min-max definition at path '%s'.".formatted(path));
     }
 
     private ValueProvider<Number> parseIntMinMax(final ConfigurationSection section, final String path) throws MargasException {
@@ -204,7 +204,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
         final int min = section.getInt(path + "." + FIELD_MIN);
         final int max = section.getInt(path + "." + FIELD_MAX);
         if (isInvalidIntRange(min, max, def)) {
-            throw new MargasException("Invalid number definition at path '%s'. Range limits are potentially swapped.".formatted(path));
+            throw new MargasException("Invalid integer min-max definition at path '%s'. Range limits are potentially swapped.".formatted(path));
         }
         return create(balancedIntRandom(min, max), def);
     }
@@ -214,7 +214,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
         final double min = section.getDouble(path + "." + FIELD_MIN);
         final double max = section.getDouble(path + "." + FIELD_MAX);
         if (isInvalidDoubleRange(min, max, def)) {
-            throw new MargasException("Invalid number definition at path '%s'. Range limits are potentially swapped.".formatted(path));
+            throw new MargasException("Invalid decimal min-max definition at path '%s'. Range limits are potentially swapped.".formatted(path));
         }
         return create(balancedDoubleRandom(min, max), def);
     }
