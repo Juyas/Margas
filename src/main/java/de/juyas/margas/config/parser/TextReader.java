@@ -22,12 +22,12 @@ public class TextReader implements ConfigSectionReader<TextValue> {
     /**
      * Pattern to check if a string is a legacy color code with the section symbol.
      */
-    private static final String LEGACY_SECTION_PATTERN = "^.*§[0-9a-fk-oA-FK-O].*$";
+    private static final String LEGACY_SECTION_PATTERN = "^(.|\n)*§[0-9a-fk-orA-FK-OR](.|\n)*$";
 
     /**
      * Pattern to check if a string is a legacy color code with the ampersand symbol.
      */
-    private static final String LEGACY_AMPERSAND_PATTERN = "^.*&[0-9a-fk-oA-FK-O].*$";
+    private static final String LEGACY_AMPERSAND_PATTERN = "^(.|\n)*&[0-9a-fk-orA-FK-OR](.|\n)*$";
 
     /**
      * Creates a new instance of TextParser.
