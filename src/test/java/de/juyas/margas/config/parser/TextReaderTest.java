@@ -1,6 +1,7 @@
 package de.juyas.margas.config.parser;
 
 import de.juyas.margas.api.MargasException;
+import de.juyas.margas.api.config.TextValue;
 import de.juyas.margas.api.config.ValueProvider;
 import org.bukkit.configuration.ConfigurationSection;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,28 +14,29 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class NumberReaderTest extends AbstractReaderFixture {
+class TextReaderTest extends AbstractReaderFixture {
 
     private static Stream<Arguments> valid() throws IOException {
-        return readFromFile("config", "numbers.yml", "numbers");
+        return readFromFile("config", "texts.yml", "texts");
     }
 
     private static Stream<Arguments> invalid() throws IOException {
-        return readFromFile("config", "bad_numbers.yml", "numbers");
+        return readFromFile("config", "bad_texts.yml", "texts");
     }
 
     @ParameterizedTest
     @MethodSource("valid")
-    void valid_numbers_should_parse_correctly(final ConfigurationSection section, final String path) {
-        final NumberReader reader = new NumberReader();
-        final ValueProvider<Number> valueProvider = assertDoesNotThrow(() -> reader.read(section, path));
+    void valid_texts_should_parse_correctly(final ConfigurationSection section, final String path) {
+        final TextReader reader = new TextReader();
+        final ValueProvider<TextValue> valueProvider = assertDoesNotThrow(() -> reader.read(section, path));
         assertDoesNotThrow(valueProvider::defaultValue);
     }
 
     @ParameterizedTest
     @MethodSource("invalid")
-    void invalid_numbers_should_fail_to_parse(final ConfigurationSection section, final String path) {
-        final NumberReader reader = new NumberReader();
+    void invalid_texts_should_fail_to_parse(final ConfigurationSection section, final String path) {
+        final TextReader reader = new TextReader();
         assertThrows(MargasException.class, () -> reader.read(section, path));
     }
+
 }

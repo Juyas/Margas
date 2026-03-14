@@ -1,0 +1,53 @@
+texts:
+  text1: That is a text
+  text2: "That is a second text"
+  text3: 'That is a third text'
+  text4: |
+    That is a fourth text
+    with multiple lines
+  text5: >
+    That is a fifth text
+    with multiple lines
+  text6:
+    - That is a sixth text
+    - with multiple lines
+  textLegacy1: That is a &nlegacy&r colored text.
+  textLegacy2: "That is a second &nlegacy&r colored text."
+  textLegacy3: 'That is a third &nlegacy&r colored text.'
+  textLegacy4: |
+    That is a fourth &nlegacy&r colored text
+    with multiple lines
+  textLegacy5: >
+    That is a fifth &nlegacy&r colored text
+    with multiple lines
+  textLegacy6:
+    - That is a sixth &nlegacy&r colored text
+    - with multiple lines
+  textLegacy7: That is a §nlegacy§r colored text.
+  textLegacy8: "That is a second §nlegacy§r colored text."
+  textLegacy9: 'That is a third §nlegacy§r colored text.'
+  textLegacy10: |
+    That is a fourth §nlegacy§r colored text
+    with multiple lines
+  textLegacy11: >
+    That is fifth §nlegacy§r colored text
+    with multiple lines
+  textLegacy12:
+    - That is sixth §nlegacy§r colored text
+    - with multiple lines
+  textColored1: <red>That is a colored text.
+  textColored2: "<red>That is a second colored text."
+  textColored3: '<red>That is a third colored text.'
+  textColored4: |
+    <red>That is a fourth colored text
+    with multiple lines
+  textColored5: >
+    <red>That is a fifth colored text
+    with multiple lines
+  textColored6:
+    - <red>That is a sixth colored text
+    - with multiple lines
+  textMixed1:
+    - <red>That is a colored text.
+    - §4with multiple lines and
+    - mixed &2formatting.
