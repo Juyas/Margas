@@ -3,6 +3,7 @@ package de.juyas.margas.config.parser;
 import de.juyas.margas.api.MargasException;
 import de.juyas.margas.api.config.ConfigSectionReader;
 import de.juyas.margas.api.config.ValueProvider;
+import de.juyas.margas.config.DefaultValueProvider;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.function.Supplier;
@@ -242,21 +243,11 @@ public class NumberReader implements ConfigSectionReader<Number> {
     }
 
     private ValueProvider<Number> create(final Number defaultNumber) {
-        return create(() -> defaultNumber, defaultNumber);
+        return new DefaultValueProvider<>(defaultNumber, () -> defaultNumber);
     }
 
     private ValueProvider<Number> create(final Supplier<Number> generator, final Number defaultNumber) {
-        return new ValueProvider<>() {
-            @Override
-            public Number defaultValue() {
-                return defaultNumber;
-            }
-
-            @Override
-            public Number generate() {
-                return generator.get();
-            }
-        };
+        return new DefaultValueProvider<>(defaultNumber, generator);
     }
 
 }
