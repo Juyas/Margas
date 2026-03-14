@@ -15,7 +15,8 @@ import java.util.stream.Stream;
 /**
  * Class AbstractReaderFixture to reduce boilerplate code in reader-related tests.
  */
-abstract class AbstractReaderFixture {
+@SuppressWarnings("PMD.UseUtilityClass")
+class AbstractReaderFixture {
 
     /**
      * Reads a configuration section from a test file extracting arguments for a {@link ConfigSectionReader} test.
