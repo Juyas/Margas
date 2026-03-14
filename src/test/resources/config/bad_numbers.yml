@@ -1,0 +1,45 @@
+numbers:
+  number1: 55a
+  number2: 5.5.4
+  number3: 5!
+  number4: 123456789123456789123456789
+  number5: "test"
+  number6: --5
+  number7:
+    default: -1
+    range: -1--10
+  number8:
+    default: -0.5
+    range: .2-.8
+  number9:
+    default: 5
+    range: 1-2
+  number10:
+    default: 5.5
+    range: 1-10a
+  number11:
+    default: 5
+    min: 8
+    max: 10
+  number12:
+    default: .5
+    min: -.2
+    max: .3
+  number13:
+    default: 5
+    min: 6
+    max: 1
+  number14:
+    min: 1
+    max: 10
+  number15:
+    range: 1-10
+  number16:
+    default: 5
+  number17:
+    default: 5.5
+    min: 4
+  number18:
+    default: 5.5
+    max: 4
+    min: a
