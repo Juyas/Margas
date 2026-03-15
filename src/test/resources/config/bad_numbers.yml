@@ -43,3 +43,46 @@ numbers:
     default: 5.5
     max: 4
     min: a
+number-ranges:
+  number-range1:
+    default: 0
+    range: 1-10
+  number-range2:
+    default: 5
+    range: 0-10
+  number-range3:
+    default: 5
+    range: 1-11
+  number-range4:
+    default: 10.5
+    range: 1-10
+  number-range5:
+    default: 5.5
+    range: 0.5-10
+  number-range6:
+    default: 5.5
+    range: 0.5-10.5
+  number-range7:
+    default: 0
+    min: 1
+    max: 10
+  number-range8:
+    default: 5
+    min: 0
+    max: 10
+  number-range9:
+    default: 5
+    min: 1
+    max: 11
+  number-range10:
+    default: 10.5
+    min: 1.5
+    max: 10.0
+  number-range11:
+    default: 5.5
+    min: 0.5
+    max: 10.0
+  number-range12:
+    default: 5.5
+    min: 1.5
+    max: 10.5
