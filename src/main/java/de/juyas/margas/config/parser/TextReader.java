@@ -3,6 +3,7 @@ package de.juyas.margas.config.parser;
 import de.juyas.margas.api.MargasException;
 import de.juyas.margas.api.config.ConfigSectionReader;
 import de.juyas.margas.api.config.TextValue;
+import de.juyas.margas.api.config.ValueGenerator;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.config.DefaultValueProvider;
 import net.kyori.adventure.text.Component;
@@ -78,22 +79,22 @@ public class TextReader implements ConfigSectionReader<TextValue> {
         return create(list, parser);
     }
 
-    private ValueProvider<TextValue> create(final List<String> rawText, final Supplier<List<Component>> parser) {
-        final Supplier<TextValue> generator = () -> {
+    private ValueProvider<TextValue> create(final List<String> rawText, final Supplier<List<Component>> parser) throws MargasException {
+        final ValueGenerator<TextValue> generator = () -> {
             final List<Component> preParsed = parser.get();
             final String raw = String.join("\n", rawText);
             final Component text = Component.textOfChildren(preParsed.toArray(ComponentLike[]::new));
             return new DefaultTextValue(raw, rawText, text, preParsed);
         };
-        return new DefaultValueProvider<>(generator.get(), generator, false);
+        return new DefaultValueProvider<>(generator.generate(), generator, false);
     }
 
-    private ValueProvider<TextValue> create(final String rawText, final Supplier<Component> parser) {
-        final Supplier<TextValue> generator = () -> {
+    private ValueProvider<TextValue> create(final String rawText, final Supplier<Component> parser) throws MargasException {
+        final ValueGenerator<TextValue> generator = () -> {
             final Component parsed = parser.get();
             return new DefaultTextValue(rawText, List.of(rawText), parsed, List.of(parsed));
         };
-        return new DefaultValueProvider<>(generator.get(), generator, false);
+        return new DefaultValueProvider<>(generator.generate(), generator, false);
     }
 
     /**

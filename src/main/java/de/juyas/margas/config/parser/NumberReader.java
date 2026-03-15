@@ -7,8 +7,6 @@ import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.config.DefaultValueProvider;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.function.Supplier;
-
 /**
  * Class NumberReader to read a number from a configuration section at a given path allowing different formats.
  */
@@ -275,7 +273,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
      * @param max the upper bound (inclusive)
      * @return a random number provider
      */
-    private Supplier<Number> balancedIntRandom(final int min, final int max) {
+    private ValueGenerator<Number> balancedIntRandom(final int min, final int max) {
         return () -> Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
@@ -286,7 +284,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
      * @param max the upper bound (inclusive)
      * @return a random number provider
      */
-    private Supplier<Number> balancedDoubleRandom(final double min, final double max) {
+    private ValueGenerator<Number> balancedDoubleRandom(final double min, final double max) {
         return () -> Math.random() * (max - min) + min;
     }
 
