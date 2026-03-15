@@ -85,7 +85,7 @@ public class TextReader implements ConfigSectionReader<TextValue> {
             final Component text = Component.textOfChildren(preParsed.toArray(ComponentLike[]::new));
             return new DefaultTextValue(raw, rawText, text, preParsed);
         };
-        return new DefaultValueProvider<>(generator.get(), generator);
+        return new DefaultValueProvider<>(generator.get(), generator, false);
     }
 
     private ValueProvider<TextValue> create(final String rawText, final Supplier<Component> parser) {
@@ -93,7 +93,7 @@ public class TextReader implements ConfigSectionReader<TextValue> {
             final Component parsed = parser.get();
             return new DefaultTextValue(rawText, List.of(rawText), parsed, List.of(parsed));
         };
-        return new DefaultValueProvider<>(generator.get(), generator);
+        return new DefaultValueProvider<>(generator.get(), generator, false);
     }
 
     /**
