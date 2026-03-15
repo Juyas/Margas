@@ -23,7 +23,7 @@ class NumberReaderTest extends AbstractReaderFixture {
         return readFromFile("config", "bad_numbers.yml", "numbers");
     }
 
-    private static Stream<Arguments> invalid_ranges() throws IOException {
+    private static Stream<Arguments> invalidRanges() throws IOException {
         return readFromFile("config", "bad_numbers.yml", "number-ranges");
     }
 
@@ -43,7 +43,7 @@ class NumberReaderTest extends AbstractReaderFixture {
     }
 
     @ParameterizedTest
-    @MethodSource("invalid_ranges")
+    @MethodSource("invalidRanges")
     void invalid_number_ranges_should_fail_to_parse(final ConfigurationSection section, final String path) {
         final NumberReader reader = new NumberReader(1, 10);
         assertThrows(MargasException.class, () -> reader.read(section, path));

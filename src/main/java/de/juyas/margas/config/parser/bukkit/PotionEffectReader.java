@@ -12,13 +12,21 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Locale;
+
 /**
  * Class PotionEffectReader to read a potion effect from a configuration.
  * <p>
  * This reader supports two formats for defining potion effects:
  * <ul>
- *     <li><b>Section format:</b> A configuration section with fields for type, duration, amplifier, ambient, particles, and icon.</li>
- *     <li><b>Inline format:</b> A string in the format "type:duration:amplifier:ambient?:particles?:icon?" where optional fields default to true.</li>
+ *     <li><b>Section format:</b>
+ *          A configuration section with fields for
+ *          type, duration, amplifier, ambient, particles, and icon.
+ *     </li>
+ *     <li><b>Inline format:</b>
+ *          A string in the format "type:duration:amplifier:ambient?:particles?:icon?"
+ *          where optional fields default to true.
+ *     </li>
  * </ul>
  * <p>
  * The reader validates all input values and throws {@link MargasException} for invalid configurations.
@@ -206,7 +214,7 @@ public class PotionEffectReader implements ConfigSectionReader<PotionEffect> {
             return true;
         }
         final String value = arguments[argument];
-        return switch (value.toLowerCase()) {
+        return switch (value.toLowerCase(Locale.ROOT)) {
             case "true", "1" -> true;
             case "false", "0" -> false;
             default ->
@@ -218,7 +226,7 @@ public class PotionEffectReader implements ConfigSectionReader<PotionEffect> {
         try {
             return Integer.parseInt(value);
         } catch (final NumberFormatException e) {
-            throw new MargasException("Invalid potion effect definition: '%s'. '%s' is not a number.".formatted(sourceValue, value));
+            throw new MargasException("Invalid potion effect definition: '%s'. '%s' is not a number.".formatted(sourceValue, value), e);
         }
     }
 }

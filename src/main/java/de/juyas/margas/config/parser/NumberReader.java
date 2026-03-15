@@ -182,7 +182,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
         final String[] split = range.split("-", 2);
         if (section.isInt(path + "." + FIELD_DEFAULT) && split[0].matches(INTEGER_PATTERN) && split[1].matches(INTEGER_PATTERN)) {
             final int def = section.getInt(path + "." + FIELD_DEFAULT);
-            validateAllowedRange("default", def, section);
+            validateAllowedRange("range-default", def, section);
             final int min = Integer.parseInt(split[0]);
             validateAllowedRange("range-min", min, section);
             final int max = Integer.parseInt(split[1]);
@@ -194,7 +194,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
         }
         if (isNumber(section, path + "." + FIELD_DEFAULT) && split[0].matches(DOUBLE_PATTERN) && split[1].matches(DOUBLE_PATTERN)) {
             final double def = section.getDouble(path + "." + FIELD_DEFAULT);
-            validateAllowedRange("default", def, section);
+            validateAllowedRange("range-default", def, section);
             final double min = Double.parseDouble(split[0]);
             validateAllowedRange("range-min", min, section);
             final double max = Double.parseDouble(split[1]);
@@ -242,7 +242,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
 
     private ValueProvider<Number> parseIntMinMax(final ConfigurationSection section, final String path) throws MargasException {
         final int def = section.getInt(path + "." + FIELD_DEFAULT);
-        validateAllowedRange("default", def, section);
+        validateAllowedRange("min-max-default", def, section);
         final int min = section.getInt(path + "." + FIELD_MIN);
         validateAllowedRange("min", min, section);
         final int max = section.getInt(path + "." + FIELD_MAX);
@@ -255,7 +255,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
 
     private ValueProvider<Number> parseDoubleMinMax(final ConfigurationSection section, final String path) throws MargasException {
         final double def = section.getDouble(path + "." + FIELD_DEFAULT);
-        validateAllowedRange("default", def, section);
+        validateAllowedRange("min-max-default", def, section);
         final double min = section.getDouble(path + "." + FIELD_MIN);
         validateAllowedRange("min", min, section);
         final double max = section.getDouble(path + "." + FIELD_MAX);
