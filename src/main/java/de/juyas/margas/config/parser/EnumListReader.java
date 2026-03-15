@@ -8,6 +8,8 @@ import java.util.List;
 
 /**
  * Class EnumReader to read an enumeration from a configuration section at a given path.
+ *
+ * @param <T> the type of the enumeration
  */
 public class EnumListReader<T extends Enum<T>> implements ConfigValueReader<List<T>> {
 
@@ -34,7 +36,7 @@ public class EnumListReader<T extends Enum<T>> implements ConfigValueReader<List
         try {
             return valueList.stream().map(value -> Enum.valueOf(enumClass, value)).toList();
         } catch (final IllegalArgumentException e) {
-            throw new MargasException("Invalid enum-list definition at path '%s'. '%s' contains invalid enum value for type '%s'".formatted(path, String.join(",", valueList), enumClass.getSimpleName()));
+            throw new MargasException("Invalid enum-list definition at path '%s'. '%s' contains invalid enum value for type '%s'".formatted(path, String.join(",", valueList), enumClass.getSimpleName()), e);
         }
     }
 

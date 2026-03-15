@@ -6,6 +6,8 @@ import org.bukkit.configuration.ConfigurationSection;
 
 /**
  * Class EnumReader to read an enumeration from a configuration section at a given path.
+ *
+ * @param <T> the type of the enumeration
  */
 public class EnumReader<T extends Enum<T>> implements ConfigValueReader<T> {
 
@@ -32,7 +34,7 @@ public class EnumReader<T extends Enum<T>> implements ConfigValueReader<T> {
         try {
             return Enum.valueOf(enumClass, value);
         } catch (final IllegalArgumentException e) {
-            throw new MargasException("Invalid enum definition at path '%s'. '%s' is not a valid enum value for type '%s'".formatted(path, value, enumClass.getSimpleName()));
+            throw new MargasException("Invalid enum definition at path '%s'. '%s' is not a valid enum value for type '%s'".formatted(path, value, enumClass.getSimpleName()), e);
         }
     }
 

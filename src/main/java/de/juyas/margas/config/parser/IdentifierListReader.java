@@ -15,6 +15,11 @@ import java.util.List;
 public class IdentifierListReader implements ConfigValueReader<List<MargasIdentifier>> {
 
     /**
+     * Number of parts of which an identifier is composed.
+     */
+    private static final int IDENTIFIER_PARTS = 2;
+
+    /**
      * Creates a new instance of IdentifierReader.
      */
     public IdentifierListReader() {
@@ -29,14 +34,14 @@ public class IdentifierListReader implements ConfigValueReader<List<MargasIdenti
         }
         final List<MargasIdentifier> identifiers = new ArrayList<>(valueList.size());
         for (final String value : valueList) {
-            final String[] split = value.split(":", 2);
-            if (split.length != 2) {
+            final String[] split = value.split(":", IDENTIFIER_PARTS);
+            if (split.length != IDENTIFIER_PARTS) {
                 throw new MargasException("Invalid identifier definition in list at path '%s': '%s'".formatted(path, valueList));
             }
             try {
-                identifiers.add(new Identifier(MargasType.valueOf(split[0].toUpperCase()), split[1]));
+                identifiers.add(new Identifier(MargasType.getByName(split[0]), split[1]));
             } catch (final IllegalArgumentException e) {
-                throw new MargasException("Invalid identifier definition in list at path '%s': '%s'".formatted(path, valueList));
+                throw new MargasException("Invalid identifier definition in list at path '%s': '%s'".formatted(path, valueList), e);
             }
         }
         return identifiers;
