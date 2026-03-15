@@ -5,6 +5,8 @@ import de.juyas.margas.api.MargasException;
 /**
  * Interface ValueGenerator to generate a value.
  * It is essentially a supplier allowed to throw exceptions.
+ *
+ * @param <T> the type of the value
  */
 @FunctionalInterface
 public interface ValueGenerator<T> {

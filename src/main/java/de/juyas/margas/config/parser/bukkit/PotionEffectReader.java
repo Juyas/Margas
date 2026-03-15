@@ -85,6 +85,13 @@ public class PotionEffectReader implements ConfigSectionReader<PotionEffect> {
      */
     private static final String FIELD_ICON = "icon";
 
+    /**
+     * Creates a new instance of PotionEffectReader.
+     */
+    public PotionEffectReader() {
+        super();
+    }
+
     @Override
     public ValueProvider<PotionEffect> read(final ConfigurationSection section, final String path) throws MargasException {
         if (section.isConfigurationSection(path)) {

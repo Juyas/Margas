@@ -10,6 +10,7 @@ import de.juyas.margas.api.config.ValueProvider;
  * @param <T>          the type of the value
  * @param defaultValue the default value
  * @param generator    the generator to generate the value
+ * @param staticValue  if the value is static. static values are not changing if repeatedly generated
  */
 public record DefaultValueProvider<T>(T defaultValue, ValueGenerator<T> generator,
                                       boolean staticValue) implements ValueProvider<T> {
