@@ -44,20 +44,23 @@ public class PotionEffectListReader implements ConfigSectionReader<List<PotionEf
     }
 
     private ValueProvider<List<PotionEffect>> parseSection(final ConfigurationSection section, final String path) throws MargasException {
+        final ValueGenerator<List<PotionEffect>> generator = () -> parseList(section, path, false);
+        return new DefaultValueProvider<>(parseList(section, path, true), generator, false);
+    }
+
+    private List<PotionEffect> parseList(final ConfigurationSection section, final String path, final boolean useDefault) throws MargasException {
         final PotionEffectReader potionEffectReader = new PotionEffectReader();
         final Set<String> keys = section.getKeys(false);
-        final ValueGenerator<List<PotionEffect>> generator = () -> {
-            final List<PotionEffect> list = new ArrayList<>(keys.size());
-            for (final String key : keys) {
-                final ConfigurationSection configurationSection = section.getConfigurationSection(key);
-                if (configurationSection == null) {
-                    throw new MargasException("Invalid potion effect list definition at path '%s'. Nothing at key: '%s'".formatted(path, key));
-                }
-                final PotionEffect generated = potionEffectReader.read(configurationSection, path).generate();
-                list.add(generated);
+        final List<PotionEffect> list = new ArrayList<>(keys.size());
+        for (final String key : keys) {
+            final ConfigurationSection configurationSection = section.getConfigurationSection(key);
+            if (configurationSection == null) {
+                throw new MargasException("Invalid potion effect list definition at path '%s'. Nothing at key: '%s'".formatted(path, key));
             }
-            return list;
-        };
-        return new DefaultValueProvider<>(generator.generate(), generator, false);
+            final ValueProvider<PotionEffect> valueProvider = potionEffectReader.read(configurationSection, path);
+            final PotionEffect generated = useDefault ? valueProvider.defaultValue() : valueProvider.generate();
+            list.add(generated);
+        }
+        return list;
     }
 }
