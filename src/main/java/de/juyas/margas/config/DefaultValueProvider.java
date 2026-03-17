@@ -1,8 +1,8 @@
 package de.juyas.margas.config;
 
+import de.juyas.margas.api.MargasException;
+import de.juyas.margas.api.config.ValueGenerator;
 import de.juyas.margas.api.config.ValueProvider;
-
-import java.util.function.Supplier;
 
 /**
  * Class DefaultValueProvider to provide a value with a default value.
@@ -10,11 +10,18 @@ import java.util.function.Supplier;
  * @param <T>          the type of the value
  * @param defaultValue the default value
  * @param generator    the generator to generate the value
+ * @param staticValue  if the value is static. static values are not changing if repeatedly generated
  */
-public record DefaultValueProvider<T>(T defaultValue, Supplier<T> generator) implements ValueProvider<T> {
+public record DefaultValueProvider<T>(T defaultValue, ValueGenerator<T> generator,
+                                      boolean staticValue) implements ValueProvider<T> {
 
     @Override
-    public T generate() {
-        return generator.get();
+    public T generate() throws MargasException {
+        return generator.generate();
+    }
+
+    @Override
+    public boolean isStatic() {
+        return staticValue;
     }
 }

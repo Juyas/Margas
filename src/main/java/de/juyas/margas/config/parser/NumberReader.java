@@ -2,11 +2,10 @@ package de.juyas.margas.config.parser;
 
 import de.juyas.margas.api.MargasException;
 import de.juyas.margas.api.config.ConfigSectionReader;
+import de.juyas.margas.api.config.ValueGenerator;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.config.DefaultValueProvider;
 import org.bukkit.configuration.ConfigurationSection;
-
-import java.util.function.Supplier;
 
 /**
  * Class NumberReader to read a number from a configuration section at a given path allowing different formats.
@@ -45,10 +44,41 @@ public class NumberReader implements ConfigSectionReader<Number> {
     private static final String FIELD_MAX = "max";
 
     /**
+     * The readers minimally allowed value.
+     */
+    private final Number minAllowed;
+
+    /**
+     * The readers maximally allowed value.
+     */
+    private final Number maxAllowed;
+
+    /**
      * Creates a new instance of NumberReader.
      */
     public NumberReader() {
+        this(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    }
+
+    /**
+     * Creates a new instance of NumberReader with a min allowed value.
+     *
+     * @param minAllowed the minimally allowed value
+     */
+    public NumberReader(final Number minAllowed) {
+        this(minAllowed, Double.POSITIVE_INFINITY);
+    }
+
+    /**
+     * Creates a new instance of NumberReader with a min and max allowed value.
+     *
+     * @param minAllowed the minimally allowed value
+     * @param maxAllowed the maximally allowed value
+     */
+    public NumberReader(final Number minAllowed, final Number maxAllowed) {
         super();
+        this.minAllowed = minAllowed;
+        this.maxAllowed = maxAllowed;
     }
 
     @Override
@@ -73,10 +103,14 @@ public class NumberReader implements ConfigSectionReader<Number> {
      */
     private ValueProvider<Number> parseDirectly(final ConfigurationSection section, final String path) throws MargasException {
         if (section.isInt(path)) {
-            return create(section.getInt(path));
+            final int value = section.getInt(path);
+            validateAllowedRange("number", value, section);
+            return create(value);
         }
         if (section.isDouble(path)) {
-            return create(section.getDouble(path));
+            final double value = section.getDouble(path);
+            validateAllowedRange("number", value, section);
+            return create(value);
         }
         throw new MargasException("Invalid number definition at path '%s'. '%s' is not a number.".formatted(path, section.get(path)));
     }
@@ -148,8 +182,11 @@ public class NumberReader implements ConfigSectionReader<Number> {
         final String[] split = range.split("-", 2);
         if (section.isInt(path + "." + FIELD_DEFAULT) && split[0].matches(INTEGER_PATTERN) && split[1].matches(INTEGER_PATTERN)) {
             final int def = section.getInt(path + "." + FIELD_DEFAULT);
+            validateAllowedRange("range-default", def, section);
             final int min = Integer.parseInt(split[0]);
+            validateAllowedRange("range-min", min, section);
             final int max = Integer.parseInt(split[1]);
+            validateAllowedRange("range-max", max, section);
             if (isInvalidIntRange(min, max, def)) {
                 throw new MargasException("Invalid integer range definition at path '%s'. Range limits are potentially swapped.".formatted(path));
             }
@@ -157,8 +194,11 @@ public class NumberReader implements ConfigSectionReader<Number> {
         }
         if (isNumber(section, path + "." + FIELD_DEFAULT) && split[0].matches(DOUBLE_PATTERN) && split[1].matches(DOUBLE_PATTERN)) {
             final double def = section.getDouble(path + "." + FIELD_DEFAULT);
+            validateAllowedRange("range-default", def, section);
             final double min = Double.parseDouble(split[0]);
+            validateAllowedRange("range-min", min, section);
             final double max = Double.parseDouble(split[1]);
+            validateAllowedRange("range-max", max, section);
             if (isInvalidDoubleRange(min, max, def)) {
                 throw new MargasException("Invalid decimal range definition at path '%s'. Range limits are potentially swapped.".formatted(path));
             }
@@ -202,8 +242,11 @@ public class NumberReader implements ConfigSectionReader<Number> {
 
     private ValueProvider<Number> parseIntMinMax(final ConfigurationSection section, final String path) throws MargasException {
         final int def = section.getInt(path + "." + FIELD_DEFAULT);
+        validateAllowedRange("min-max-default", def, section);
         final int min = section.getInt(path + "." + FIELD_MIN);
+        validateAllowedRange("min", min, section);
         final int max = section.getInt(path + "." + FIELD_MAX);
+        validateAllowedRange("max", max, section);
         if (isInvalidIntRange(min, max, def)) {
             throw new MargasException("Invalid integer min-max definition at path '%s'. Range limits are potentially swapped.".formatted(path));
         }
@@ -212,8 +255,11 @@ public class NumberReader implements ConfigSectionReader<Number> {
 
     private ValueProvider<Number> parseDoubleMinMax(final ConfigurationSection section, final String path) throws MargasException {
         final double def = section.getDouble(path + "." + FIELD_DEFAULT);
+        validateAllowedRange("min-max-default", def, section);
         final double min = section.getDouble(path + "." + FIELD_MIN);
+        validateAllowedRange("min", min, section);
         final double max = section.getDouble(path + "." + FIELD_MAX);
+        validateAllowedRange("max", max, section);
         if (isInvalidDoubleRange(min, max, def)) {
             throw new MargasException("Invalid decimal min-max definition at path '%s'. Range limits are potentially swapped.".formatted(path));
         }
@@ -227,7 +273,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
      * @param max the upper bound (inclusive)
      * @return a random number provider
      */
-    private Supplier<Number> balancedIntRandom(final int min, final int max) {
+    private ValueGenerator<Number> balancedIntRandom(final int min, final int max) {
         return () -> Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
@@ -238,16 +284,30 @@ public class NumberReader implements ConfigSectionReader<Number> {
      * @param max the upper bound (inclusive)
      * @return a random number provider
      */
-    private Supplier<Number> balancedDoubleRandom(final double min, final double max) {
+    private ValueGenerator<Number> balancedDoubleRandom(final double min, final double max) {
         return () -> Math.random() * (max - min) + min;
     }
 
-    private ValueProvider<Number> create(final Number defaultNumber) {
-        return new DefaultValueProvider<>(defaultNumber, () -> defaultNumber);
+    /**
+     * Validates the given value to be within the allowed range.
+     *
+     * @param valueName the name of the value to validate, e.g. "min"
+     * @param value     the value to validate
+     * @param section   the section where the value is defined
+     * @throws MargasException if the value is not within the allowed range
+     */
+    private void validateAllowedRange(final String valueName, final Number value, final ConfigurationSection section) throws MargasException {
+        if (value.doubleValue() < minAllowed.doubleValue() || value.doubleValue() > maxAllowed.doubleValue()) {
+            throw new MargasException("%s '%s' is not within the allowed range of '%s' and '%s' in section '%s'.".formatted(valueName, value, minAllowed, maxAllowed, section.getCurrentPath()));
+        }
     }
 
-    private ValueProvider<Number> create(final Supplier<Number> generator, final Number defaultNumber) {
-        return new DefaultValueProvider<>(defaultNumber, generator);
+    private ValueProvider<Number> create(final Number defaultNumber) {
+        return new DefaultValueProvider<>(defaultNumber, () -> defaultNumber, true);
+    }
+
+    private ValueProvider<Number> create(final ValueGenerator<Number> generator, final Number defaultNumber) {
+        return new DefaultValueProvider<>(defaultNumber, generator, false);
     }
 
 }
