@@ -5,17 +5,16 @@ import de.juyas.margas.api.config.ConfigSectionReader;
 import de.juyas.margas.api.config.ValueGenerator;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.config.DefaultValueProvider;
+import de.juyas.margas.config.parser.ListToSectionConverter;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
- * Class PotionEffectListReader
+ * Class PotionEffectListReader to read a list of potion effects.
  */
 public class PotionEffectListReader implements ConfigSectionReader<List<PotionEffect>> {
 
@@ -32,13 +31,7 @@ public class PotionEffectListReader implements ConfigSectionReader<List<PotionEf
             return parseSection(section, path);
         }
         if (section.isList(path)) {
-            final List<Map<?, ?>> list = section.getMapList(path);
-            final YamlConfiguration configuration = new YamlConfiguration();
-            final ConfigurationSection configurationSection = configuration.createSection(path);
-            for (final Map<?, ?> map : list) {
-                map.keySet().forEach(key -> configurationSection.set(key.toString(), map.get(key)));
-            }
-            return parseSection(configurationSection, path);
+            return parseSection(ListToSectionConverter.convert(section, path), path);
         }
         throw new MargasException("Invalid potion effect list definition at path '%s'.".formatted(path));
     }
