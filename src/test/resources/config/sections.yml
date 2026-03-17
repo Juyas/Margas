@@ -1,0 +1,14 @@
+sections:
+  test1:
+    - subsection1:
+        value1: 1
+        value2: 2
+    - subsection2:
+        value1: 1
+        value2: 2
+    - subsection3:
+        depth:
+          deeper:
+            value: 1
+    - subsection4: 4
+      subsection5: 5
