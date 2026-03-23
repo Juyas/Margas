@@ -19,6 +19,11 @@ import java.util.Map;
 public class EnchantmentReader implements ConfigSectionReader<Map.Entry<Enchantment, Integer>> {
 
     /**
+     * Number of parts of which an enchantment is composed in an inline definition.
+     */
+    private static final int INLINE_SPLIT_PARTS = 2;
+
+    /**
      * The name of the field containing the type of the enchantment.
      */
     private static final String FIELD_TYPE = "type";
@@ -69,7 +74,7 @@ public class EnchantmentReader implements ConfigSectionReader<Map.Entry<Enchantm
             throw new MargasException("Missing enchantment definition in section '%s' at path '%s'.".formatted(section.getCurrentPath(), path));
         }
         final String[] split = value.split(":");
-        if (split.length != 2) {
+        if (split.length != INLINE_SPLIT_PARTS) {
             throw new MargasException("Invalid enchantment definition at path '%s'.".formatted(path));
         }
         final Enchantment enchantment = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT).get(NamespacedKey.minecraft(split[0]));
