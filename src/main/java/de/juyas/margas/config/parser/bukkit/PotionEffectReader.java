@@ -211,7 +211,7 @@ public class PotionEffectReader implements ConfigSectionReader<PotionEffect> {
         final boolean icon = tryParseBoolean(value, arguments, 5);
 
         final PotionEffect effect = new PotionEffect(potionEffectType, duration, amplifier, ambient, particles, icon);
-        return new DefaultValueProvider<>(effect, () -> effect, true);
+        return new DefaultValueProvider<>(effect);
     }
 
     private boolean tryParseBoolean(final String sourceValue, final String[] arguments, final int argument) throws MargasException {

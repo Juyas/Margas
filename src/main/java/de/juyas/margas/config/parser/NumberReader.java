@@ -303,7 +303,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
     }
 
     private ValueProvider<Number> create(final Number defaultNumber) {
-        return new DefaultValueProvider<>(defaultNumber, () -> defaultNumber, true);
+        return new DefaultValueProvider<>(defaultNumber);
     }
 
     private ValueProvider<Number> create(final ValueGenerator<Number> generator, final Number defaultNumber) {

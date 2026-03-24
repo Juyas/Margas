@@ -15,6 +15,15 @@ import de.juyas.margas.api.config.ValueProvider;
 public record DefaultValueProvider<T>(T defaultValue, ValueGenerator<T> generator,
                                       boolean staticValue) implements ValueProvider<T> {
 
+    /**
+     * Creates a new instance of DefaultValueProvider for a static value with the given default value.
+     *
+     * @param defaultValue the default value
+     */
+    public DefaultValueProvider(final T defaultValue) {
+        this(defaultValue, () -> defaultValue, true);
+    }
+
     @Override
     public T generate() throws MargasException {
         return generator.generate();
