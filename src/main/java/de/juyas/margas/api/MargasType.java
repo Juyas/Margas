@@ -17,6 +17,16 @@ public enum MargasType {
     CREATURE("mob", "mobs"),
 
     /**
+     * This type represents an effect that supposed to be applied to or by margas creatures.
+     */
+    CREATURE_EFFECT("effect", "effects"),
+
+    /**
+     * This type represents an attribute that supposed to modify the attributes of margas creatures.
+     */
+    CREATURE_ATTRIBUTE("attribute", "attributes"),
+
+    /**
      * This type represents an item that supposed to be used in margas areas as loot or equipment.
      */
     ITEM("item", "items"),
