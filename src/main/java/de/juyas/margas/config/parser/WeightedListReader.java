@@ -14,7 +14,7 @@ import org.bukkit.configuration.ConfigurationSection;
  *
  * @param <T> the type of the elements of the weighted list
  */
-public class WeightedListReader<T> implements ConfigSectionReader<WeightedList<T>> {
+public class WeightedListReader<T> implements ConfigSectionReader<WeightedList<ValueProvider<T>>> {
 
     /**
      * The name of the field containing the weight of an element.
@@ -36,7 +36,7 @@ public class WeightedListReader<T> implements ConfigSectionReader<WeightedList<T
     }
 
     @Override
-    public ValueProvider<WeightedList<T>> read(final ConfigurationSection section, final String path) throws MargasException {
+    public ValueProvider<WeightedList<ValueProvider<T>>> read(final ConfigurationSection section, final String path) throws MargasException {
         if (section.isList(path)) {
             return parseSection(ListToSectionConverter.convert(section, path), path);
         }
@@ -46,18 +46,20 @@ public class WeightedListReader<T> implements ConfigSectionReader<WeightedList<T
         throw new MargasException("Invalid weighted identifier list definition at path '%s'.".formatted(path));
     }
 
-    private ValueProvider<WeightedList<T>> parseSection(final ConfigurationSection section, final String path) throws MargasException {
-        final ValueGenerator<WeightedList<T>> generator = createGenerator(section, path, false);
+    private ValueProvider<WeightedList<ValueProvider<T>>> parseSection(final ConfigurationSection section, final String path) throws MargasException {
+        final ValueGenerator<WeightedList<ValueProvider<T>>> generator = createGenerator(section, path, false);
         return new DefaultValueProvider<>(createGenerator(section, path, true).generate(), generator, false);
     }
 
-    private ValueGenerator<WeightedList<T>> createGenerator(final ConfigurationSection section, final String path, final boolean useDefault) {
+    private ValueGenerator<WeightedList<ValueProvider<T>>> createGenerator(final ConfigurationSection section, final String path, final boolean useDefault) {
+        final NumberReader numberReader = new NumberReader(0, Integer.MAX_VALUE);
         return () -> {
-            final WeightedList<T> weightedList = new DefaultWeightedList<>();
+            final WeightedList<ValueProvider<T>> weightedList = new DefaultWeightedList<>();
             for (final String key : section.getKeys(false)) {
                 final String pathDown = path + "." + key;
                 final ValueProvider<T> valueProvider = elementReader.read(section, pathDown);
-                weightedList.add(useDefault ? valueProvider.defaultValue() : valueProvider.generate(), section.getInt(pathDown + "." + FIELD_WEIGHT));
+                final ValueProvider<Number> weight = numberReader.read(section, pathDown + "." + FIELD_WEIGHT);
+                weightedList.add(valueProvider, useDefault ? weight.defaultValue() : weight.generate());
             }
             return weightedList;
         };

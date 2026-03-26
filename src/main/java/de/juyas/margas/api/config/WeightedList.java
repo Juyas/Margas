@@ -20,6 +20,13 @@ public interface WeightedList<T> {
     void add(T value, Number weight);
 
     /**
+     * Adds all elements from the given weighted list to this weighted list.
+     *
+     * @param list the weighted list to add
+     */
+    void add(WeightedList<T> list);
+
+    /**
      * Returns the list of weighted elements.
      * Each element contains a value and its corresponding weight.
      *

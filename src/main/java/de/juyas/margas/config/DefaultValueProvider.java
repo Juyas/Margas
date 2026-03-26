@@ -4,6 +4,8 @@ import de.juyas.margas.api.MargasException;
 import de.juyas.margas.api.config.ValueGenerator;
 import de.juyas.margas.api.config.ValueProvider;
 
+import java.util.function.Function;
+
 /**
  * Class DefaultValueProvider to provide a value with a default value.
  *
@@ -32,5 +34,10 @@ public record DefaultValueProvider<T>(T defaultValue, ValueGenerator<T> generato
     @Override
     public boolean isStatic() {
         return staticValue;
+    }
+
+    @Override
+    public <U> ValueProvider<U> map(final Function<T, U> function) {
+        return new DefaultValueProvider<>(function.apply(defaultValue), () -> function.apply(generate()), false);
     }
 }
