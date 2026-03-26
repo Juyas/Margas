@@ -22,15 +22,29 @@ public class DefaultWeightedList<T> implements WeightedList<T> {
     private final List<Weighted<T>> values;
 
     /**
-     * Creates a new instance of DefaultWeightedList.
+     * Creates a new instance of an empty DefaultWeightedList.
      */
     public DefaultWeightedList() {
         this.values = new ArrayList<>();
     }
 
+    /**
+     * Creates a new instance of DefaultWeightedList composed of all the elements of the given lists.
+     *
+     * @param lists the lists to compose the weighted list from
+     */
+    public DefaultWeightedList(final List<WeightedList<T>> lists) {
+        this.values = new ArrayList<>(lists.stream().map(WeightedList::elements).flatMap(List::stream).toList());
+    }
+
     @Override
     public void add(final T value, final Number weight) {
         this.values.add(new DefaultWeighted<>(value, weight));
+    }
+
+    @Override
+    public void add(final WeightedList<T> list) {
+        this.values.addAll(list.elements());
     }
 
     @Override
