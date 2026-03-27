@@ -4,6 +4,7 @@ import de.juyas.margas.api.MargasException;
 import de.juyas.margas.api.MargasIdentifier;
 import de.juyas.margas.api.MargasType;
 import de.juyas.margas.api.config.ConfigSectionReader;
+import de.juyas.margas.api.config.ValueGenerator;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.api.config.WeightedList;
 import de.juyas.margas.api.loot.MargasItem;
@@ -87,16 +88,22 @@ public class MargasLootTableReader implements ConfigSectionReader<MargasLootTabl
         final List<ValueProvider<WeightedList<ValueProvider<MargasItem>>>> providers =
                 new ArrayList<>(tables.stream().map(provider -> provider.map(MargasLootTable::items)).toList());
         providers.add(additionalItems);
-        return new DefaultValueProvider<>(providers.stream().map(ValueProvider::defaultValue)
-                .collect(DefaultWeightedList::new, DefaultWeightedList::add, DefaultWeightedList::add),
-                () -> {
-                    final DefaultWeightedList<ValueProvider<MargasItem>> valueProviderDefaultWeightedList = new DefaultWeightedList<>();
-                    for (final ValueProvider<WeightedList<ValueProvider<MargasItem>>> provider : providers) {
-                        final WeightedList<ValueProvider<MargasItem>> generate = provider.generate();
-                        valueProviderDefaultWeightedList.add(generate);
-                    }
-                    return valueProviderDefaultWeightedList;
-                }, false);
+        final ValueGenerator<WeightedList<ValueProvider<MargasItem>>> defaultValueGenerator = () -> {
+            final DefaultWeightedList<ValueProvider<MargasItem>> defaultList = new DefaultWeightedList<>();
+            for (final ValueProvider<WeightedList<ValueProvider<MargasItem>>> weightedListValueProvider : providers) {
+                defaultList.add(weightedListValueProvider.defaultValue());
+            }
+            return defaultList;
+        };
+        final ValueGenerator<WeightedList<ValueProvider<MargasItem>>> valueGenerator = () -> {
+            final DefaultWeightedList<ValueProvider<MargasItem>> valueProviderDefaultWeightedList = new DefaultWeightedList<>();
+            for (final ValueProvider<WeightedList<ValueProvider<MargasItem>>> provider : providers) {
+                final WeightedList<ValueProvider<MargasItem>> generate = provider.generate();
+                valueProviderDefaultWeightedList.add(generate);
+            }
+            return valueProviderDefaultWeightedList;
+        };
+        return new DefaultValueProvider<>(defaultValueGenerator, valueGenerator, false);
     }
 
     private record DefaultMargasLootTable(MargasIdentifier identifier, List<MargasIdentifier> parents,
