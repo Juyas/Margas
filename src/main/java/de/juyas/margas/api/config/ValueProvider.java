@@ -16,8 +16,9 @@ public interface ValueProvider<T> {
      * Returns the default value.
      *
      * @return the default value
+     * @throws MargasException if the default value cannot be retrieved
      */
-    T defaultValue();
+    T defaultValue() throws MargasException;
 
     /**
      * Generates a new value.
