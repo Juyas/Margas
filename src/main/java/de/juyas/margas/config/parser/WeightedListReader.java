@@ -46,14 +46,13 @@ public class WeightedListReader<T> implements ConfigSectionReader<WeightedList<V
         throw new MargasException("Invalid weighted identifier list definition at path '%s'.".formatted(path));
     }
 
-    private ValueProvider<WeightedList<ValueProvider<T>>> parseSection(final ConfigurationSection section, final String path) throws MargasException {
-        final ValueGenerator<WeightedList<ValueProvider<T>>> generator = createGenerator(section, path, false);
-        return new DefaultValueProvider<>(createGenerator(section, path, true).generate(), generator, false);
+    private ValueProvider<WeightedList<ValueProvider<T>>> parseSection(final ConfigurationSection section, final String path) {
+        return new DefaultValueProvider<>(createGenerator(section, path), false);
     }
 
-    private ValueGenerator<WeightedList<ValueProvider<T>>> createGenerator(final ConfigurationSection section, final String path, final boolean useDefault) {
+    private ValueGenerator<WeightedList<ValueProvider<T>>> createGenerator(final ConfigurationSection section, final String path) {
         final NumberReader numberReader = new NumberReader(0, Integer.MAX_VALUE);
-        return () -> {
+        return useDefault -> {
             final WeightedList<ValueProvider<T>> weightedList = new DefaultWeightedList<>();
             for (final String key : section.getKeys(false)) {
                 final String pathDown = path + "." + key;

@@ -65,7 +65,7 @@ public class EnchantmentReader implements ConfigSectionReader<Map.Entry<Enchantm
             throw new MargasException("Invalid enchantment definition at path '%s'. Unknown enchantment type '%s'.".formatted(enchantmentSection.getCurrentPath(), enchantmentType));
         }
         final ValueProvider<Number> level = parseLevel(enchantmentSection);
-        return new DefaultValueProvider<>(Map.entry(enchantment, level.defaultValue().intValue()), () -> Map.entry(enchantment, level.generate().intValue()), level.isStatic());
+        return new DefaultValueProvider<>(useDefault -> Map.entry(enchantment, level.generate(useDefault).intValue()), level.isStatic());
     }
 
     private ValueProvider<Map.Entry<Enchantment, Integer>> parseInline(final ConfigurationSection section, final String path) throws MargasException {

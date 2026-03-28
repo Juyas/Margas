@@ -70,8 +70,7 @@ public class MargasCreatureEffectReader implements ConfigSectionReader<MargasCre
         final PotionEffectApplicationTarget target = targetReader.read(effectSection, FIELD_TARGET);
         final ValueProvider<Number> range = effectSection.contains(FIELD_RANGE) ? rangeReader.read(effectSection, FIELD_RANGE) : new DefaultValueProvider<>(0);
 
-        return new DefaultValueProvider<>(new DefaultCreatureEffect(identifier, effectsList.defaultValue(), trigger, target, range.defaultValue()),
-                () -> new DefaultCreatureEffect(identifier, effectsList.generate(), trigger, target, range.generate()), false);
+        return new DefaultValueProvider<>(useDefault -> new DefaultCreatureEffect(identifier, effectsList.generate(useDefault), trigger, target, range.generate(useDefault)), false);
     }
 
     private record DefaultCreatureEffect(EffectIdentifier identifier, List<PotionEffect> effects,
