@@ -14,6 +14,7 @@ import de.juyas.margas.config.DefaultValueProvider;
 import de.juyas.margas.config.DefaultWeightedList;
 import de.juyas.margas.config.parser.IdentifierListReader;
 import de.juyas.margas.config.parser.IdentifierReader;
+import de.juyas.margas.config.parser.InlineWrapperReader;
 import de.juyas.margas.config.parser.WeightedListReader;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -69,7 +70,7 @@ public class MargasLootTableReader implements ConfigSectionReader<MargasLootTabl
 
         final IdentifierListReader parentReader = new IdentifierListReader();
         final LootTableIdentifier identifier = new LootTableIdentifier(lootTableSection.getName());
-        final WeightedListReader<MargasItem> weightedListReader = new WeightedListReader<>(new MargasItemReader(margasItemManager));
+        final WeightedListReader<MargasItem> weightedListReader = new WeightedListReader<>(new InlineWrapperReader<>("Item", new MargasItemReader(), margasItemManager));
         final ValueProvider<WeightedList<ValueProvider<MargasItem>>> itemList = weightedListReader.read(lootTableSection, FIELD_ITEMS);
         final List<MargasIdentifier> parents = lootTableSection.isList(FIELD_PARENT) ? parentReader.read(lootTableSection, FIELD_PARENT) : new ArrayList<>();
         if (lootTableSection.isString(FIELD_PARENT)) {
