@@ -11,7 +11,8 @@ import de.juyas.margas.api.creature.PotionEffectApplicationTarget;
 import de.juyas.margas.config.DefaultValueProvider;
 import de.juyas.margas.config.parser.EnumReader;
 import de.juyas.margas.config.parser.NumberReader;
-import de.juyas.margas.config.parser.bukkit.PotionEffectListReader;
+import de.juyas.margas.config.parser.SectionListReader;
+import de.juyas.margas.config.parser.bukkit.PotionEffectReader;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.potion.PotionEffect;
 
@@ -59,7 +60,7 @@ public class MargasCreatureEffectReader implements ConfigSectionReader<MargasCre
             throw new MargasException("Missing creature effect definition in section '%s' at path '%s'.".formatted(section.getCurrentPath(), path));
         }
 
-        final PotionEffectListReader potionEffectListReader = new PotionEffectListReader();
+        final ConfigSectionReader<List<PotionEffect>> potionEffectListReader = new SectionListReader<>(new PotionEffectReader());
         final EnumReader<PotionEffectApplicationCause> triggerReader = new EnumReader<>(PotionEffectApplicationCause.class);
         final EnumReader<PotionEffectApplicationTarget> targetReader = new EnumReader<>(PotionEffectApplicationTarget.class);
         final NumberReader rangeReader = new NumberReader(1, 100);
