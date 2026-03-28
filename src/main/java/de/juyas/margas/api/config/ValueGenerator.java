@@ -14,9 +14,10 @@ public interface ValueGenerator<T> {
     /**
      * Generates a new value of type T.
      *
+     * @param useDefault if the default value should be used instead of generating a new value
      * @return the generated value
      * @throws MargasException if the generation fails
      */
-    T generate() throws MargasException;
+    T generate(boolean useDefault) throws MargasException;
 
 }
