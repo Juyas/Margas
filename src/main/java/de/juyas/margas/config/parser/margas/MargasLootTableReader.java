@@ -77,10 +77,7 @@ public class MargasLootTableReader implements ConfigSectionReader<MargasLootTabl
             parents.add(new IdentifierReader().read(lootTableSection, FIELD_PARENT));
         }
 
-        final List<ValueProvider<MargasLootTable>> parentTables = new ArrayList<>(margasLootTableManager.get(parents));
-        final ValueProvider<WeightedList<ValueProvider<MargasItem>>> resultingTable = combine(parentTables, itemList);
-
-        return new DefaultValueProvider<>(useDefault -> new DefaultMargasLootTable(identifier, parents, resultingTable.generate(useDefault)), false);
+        return new DefaultValueProvider<>(useDefault -> new DefaultMargasLootTable(identifier, parents, combine(margasLootTableManager.get(parents), itemList).generate(useDefault)), false);
     }
 
     private ValueProvider<WeightedList<ValueProvider<MargasItem>>> combine(final List<ValueProvider<MargasLootTable>> tables,
