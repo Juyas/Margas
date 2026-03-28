@@ -7,17 +7,22 @@ import de.juyas.margas.api.config.ConfigSectionReader;
 import de.juyas.margas.api.config.TextValue;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.api.loot.MargasItem;
-import de.juyas.margas.api.manager.MargasManager;
 import de.juyas.margas.config.DefaultValueProvider;
 import de.juyas.margas.config.EmptyTextValue;
-import de.juyas.margas.config.parser.*;
+import de.juyas.margas.config.parser.EnumListReader;
+import de.juyas.margas.config.parser.EnumReader;
+import de.juyas.margas.config.parser.NumberReader;
+import de.juyas.margas.config.parser.TextReader;
 import de.juyas.margas.config.parser.bukkit.EnchantmentListReader;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class MargasItemReader to read a margas item from a configuration section at a given path.
@@ -60,26 +65,15 @@ public class MargasItemReader implements ConfigSectionReader<MargasItem> {
     private static final String FIELD_UNBREAKABLE = "unbreakable";
 
     /**
-     * The margas item manager.
-     */
-    private final MargasManager<MargasItem> margasItemManager;
-
-    /**
      * Creates a new instance of MargasItemReader.
-     *
-     * @param margasItemManager the margas item manager
      */
-    public MargasItemReader(final MargasManager<MargasItem> margasItemManager) {
+    public MargasItemReader() {
         super();
-        this.margasItemManager = margasItemManager;
     }
 
     @Override
     @SuppressWarnings("PMD.CyclomaticComplexity")
     public ValueProvider<MargasItem> read(final ConfigurationSection section, final String path) throws MargasException {
-        if (section.isString(path)) {
-            return parseInline(section, path);
-        }
         if (!section.isConfigurationSection(path)) {
             throw new MargasException("Invalid margas item definition in section '%s' at path '%s'.".formatted(section.getCurrentPath(), path));
         }
@@ -106,16 +100,6 @@ public class MargasItemReader implements ConfigSectionReader<MargasItem> {
         return new DefaultValueProvider<>(useDefault -> new DefaultMargasItem(identifier, type,
                 amount.generate(useDefault).intValue(), name.generate(useDefault), description.generate(useDefault),
                 enchantments.generate(useDefault), flags, unbreakable), false);
-    }
-
-    private ValueProvider<MargasItem> parseInline(final ConfigurationSection section, final String path) throws MargasException {
-        final IdentifierReader identifierReader = new IdentifierReader();
-        final MargasIdentifier margasIdentifier = identifierReader.read(section, path);
-        final Optional<ValueProvider<MargasItem>> margasItem = margasItemManager.get(margasIdentifier);
-        if (margasItem.isPresent()) {
-            return margasItem.get();
-        }
-        throw new MargasException("Invalid margas item definition in section '%s' at path '%s'. Identifier '%s' not found.".formatted(section.getCurrentPath(), path, margasIdentifier.full()));
     }
 
     private record DefaultMargasItem(MargasIdentifier identifier, Material type, int amount, TextValue name,
