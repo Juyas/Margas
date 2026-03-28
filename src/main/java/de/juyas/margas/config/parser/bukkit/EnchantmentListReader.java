@@ -2,7 +2,6 @@ package de.juyas.margas.config.parser.bukkit;
 
 import de.juyas.margas.api.MargasException;
 import de.juyas.margas.api.config.ConfigSectionReader;
-import de.juyas.margas.api.config.ValueGenerator;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.config.DefaultValueProvider;
 import de.juyas.margas.config.parser.ListToSectionConverter;
@@ -36,9 +35,8 @@ public class EnchantmentListReader implements ConfigSectionReader<Map<Enchantmen
         throw new MargasException("Invalid enchantment list definition in section '%s' at path '%s'.".formatted(section.getCurrentPath(), path));
     }
 
-    private ValueProvider<Map<Enchantment, Integer>> parseSection(final ConfigurationSection section, final String path) throws MargasException {
-        final ValueGenerator<Map<Enchantment, Integer>> generator = () -> parseMap(section, path, false);
-        return new DefaultValueProvider<>(parseMap(section, path, true), generator, false);
+    private ValueProvider<Map<Enchantment, Integer>> parseSection(final ConfigurationSection section, final String path) {
+        return new DefaultValueProvider<>(useDefault -> parseMap(section, path, useDefault), false);
     }
 
     private Map<Enchantment, Integer> parseMap(final ConfigurationSection section, final String path, final boolean useDefault) throws MargasException {

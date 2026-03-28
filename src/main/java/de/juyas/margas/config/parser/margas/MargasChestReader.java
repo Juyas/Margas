@@ -76,8 +76,7 @@ public class MargasChestReader implements ConfigSectionReader<MargasChest> {
             throw new MargasException("Invalid loot table definition in section '%s' at path '%s'. Identifier '%s' not found.".formatted(section.getCurrentPath(), path + "." + FIELD_LOOT_TABLE, table.full()));
         }
 
-        return new DefaultValueProvider<>(new DefaultMargasChest(identifier, chestType, margasLootTable.get().defaultValue(), keys),
-                () -> new DefaultMargasChest(identifier, chestType, margasLootTable.get().generate(), keys), false);
+        return new DefaultValueProvider<>(useDefault -> new DefaultMargasChest(identifier, chestType, margasLootTable.get().generate(useDefault), keys), false);
     }
 
     private record DefaultMargasChest(MargasIdentifier identifier, Material type, MargasLootTable lootTable,

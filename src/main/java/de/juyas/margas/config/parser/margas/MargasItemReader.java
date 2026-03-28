@@ -103,8 +103,9 @@ public class MargasItemReader implements ConfigSectionReader<MargasItem> {
         final ValueProvider<Map<Enchantment, Integer>> enchantments = itemSection.contains(FIELD_ENCHANTMENTS) ? enchantmentReader.read(itemSection, FIELD_ENCHANTMENTS) : new DefaultValueProvider<>(Collections.emptyMap());
         final boolean unbreakable = itemSection.getBoolean(FIELD_UNBREAKABLE, false);
 
-        return new DefaultValueProvider<>(new DefaultMargasItem(identifier, type, amount.defaultValue().intValue(), name.defaultValue(), description.defaultValue(), enchantments.defaultValue(), flags, unbreakable),
-                () -> new DefaultMargasItem(identifier, type, amount.generate().intValue(), name.generate(), description.generate(), enchantments.generate(), flags, unbreakable), false);
+        return new DefaultValueProvider<>(useDefault -> new DefaultMargasItem(identifier, type,
+                amount.generate(useDefault).intValue(), name.generate(useDefault), description.generate(useDefault),
+                enchantments.generate(useDefault), flags, unbreakable), false);
     }
 
     private ValueProvider<MargasItem> parseInline(final ConfigurationSection section, final String path) throws MargasException {

@@ -64,8 +64,7 @@ public class MargasKeyReader implements ConfigSectionReader<MargasKey> {
         final ValueProvider<TextValue> description = textReader.read(keySection, FIELD_DESCRIPTION);
         final boolean enchanted = keySection.getBoolean(FIELD_ENCHANTED, false);
 
-        return new DefaultValueProvider<>(new DefaultMargasKey(identifier, type, name.defaultValue(), description.defaultValue(), enchanted),
-                () -> new DefaultMargasKey(identifier, type, name.generate(), description.generate(), enchanted), false);
+        return new DefaultValueProvider<>(useDefault -> new DefaultMargasKey(identifier, type, name.generate(useDefault), description.generate(useDefault), enchanted), false);
     }
 
     private record DefaultMargasKey(MargasIdentifier identifier, Material type, TextValue name,

@@ -79,22 +79,24 @@ public class TextReader implements ConfigSectionReader<TextValue> {
         return create(list, parser);
     }
 
-    private ValueProvider<TextValue> create(final List<String> rawText, final Supplier<List<Component>> parser) throws MargasException {
-        final ValueGenerator<TextValue> generator = () -> {
-            final List<Component> preParsed = parser.get();
+    private ValueProvider<TextValue> create(final List<String> rawText, final Supplier<List<Component>> parser) {
+        final List<Component> preParsedDefault = parser.get();
+        final ValueGenerator<TextValue> generator = useDefault -> {
+            final List<Component> preParsed = useDefault ? preParsedDefault : parser.get();
             final String raw = String.join("\n", rawText);
             final Component text = Component.textOfChildren(preParsed.toArray(ComponentLike[]::new));
             return new DefaultTextValue(raw, rawText, text, preParsed);
         };
-        return new DefaultValueProvider<>(generator.generate(), generator, false);
+        return new DefaultValueProvider<>(generator, false);
     }
 
-    private ValueProvider<TextValue> create(final String rawText, final Supplier<Component> parser) throws MargasException {
-        final ValueGenerator<TextValue> generator = () -> {
-            final Component parsed = parser.get();
+    private ValueProvider<TextValue> create(final String rawText, final Supplier<Component> parser) {
+        final Component defaultValue = parser.get();
+        final ValueGenerator<TextValue> generator = useDefault -> {
+            final Component parsed = useDefault ? defaultValue : parser.get();
             return new DefaultTextValue(rawText, List.of(rawText), parsed, List.of(parsed));
         };
-        return new DefaultValueProvider<>(generator.generate(), generator, false);
+        return new DefaultValueProvider<>(generator, false);
     }
 
     /**

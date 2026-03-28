@@ -77,8 +77,7 @@ public class MargasCreatureAttributeModifierReader implements ConfigSectionReade
         final EquipmentSlotGroup slotGroup = getEquipmentSlotGroup(section, path, modifierSection);
         final Attribute attribute = getAttribute(section, path, modifierSection);
 
-        return new DefaultValueProvider<>(new DefaultCreatureAttributeModifier(identifier, value.defaultValue(), attribute, operation, persistent, slotGroup),
-                () -> new DefaultCreatureAttributeModifier(identifier, value.generate(), attribute, operation, persistent, slotGroup), value.isStatic());
+        return new DefaultValueProvider<>(useDefault -> new DefaultCreatureAttributeModifier(identifier, value.generate(useDefault), attribute, operation, persistent, slotGroup), value.isStatic());
     }
 
     private EquipmentSlotGroup getEquipmentSlotGroup(final ConfigurationSection section, final String path, final ConfigurationSection modifierSection) throws MargasException {

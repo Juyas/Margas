@@ -141,17 +141,12 @@ public class PotionEffectReader implements ConfigSectionReader<PotionEffect> {
         final boolean particles = effectSection.getBoolean(FIELD_PARTICLES, true);
         final boolean icon = effectSection.getBoolean(FIELD_ICON, true);
 
-        final PotionEffect defaultEffect = new PotionEffect(potionEffectType,
-                durationReader.read(effectSection, FIELD_DURATION).defaultValue().intValue(),
-                amplifierReader.read(effectSection, FIELD_AMPLIFIER).defaultValue().intValue(),
+        final ValueGenerator<PotionEffect> generator = useDefault -> new PotionEffect(potionEffectType,
+                durationReader.read(effectSection, FIELD_DURATION).generate(useDefault).intValue(),
+                amplifierReader.read(effectSection, FIELD_AMPLIFIER).generate(useDefault).intValue(),
                 ambient, particles, icon);
 
-        final ValueGenerator<PotionEffect> generator = () -> new PotionEffect(potionEffectType,
-                durationReader.read(effectSection, FIELD_DURATION).generate().intValue(),
-                amplifierReader.read(effectSection, FIELD_AMPLIFIER).generate().intValue(),
-                ambient, particles, icon);
-
-        return new DefaultValueProvider<>(defaultEffect, generator, false);
+        return new DefaultValueProvider<>(generator, false);
     }
 
     /**

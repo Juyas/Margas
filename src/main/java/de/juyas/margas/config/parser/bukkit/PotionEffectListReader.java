@@ -2,7 +2,6 @@ package de.juyas.margas.config.parser.bukkit;
 
 import de.juyas.margas.api.MargasException;
 import de.juyas.margas.api.config.ConfigSectionReader;
-import de.juyas.margas.api.config.ValueGenerator;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.config.DefaultValueProvider;
 import de.juyas.margas.config.parser.ListToSectionConverter;
@@ -36,9 +35,8 @@ public class PotionEffectListReader implements ConfigSectionReader<List<PotionEf
         throw new MargasException("Invalid potion effect list definition at path '%s'.".formatted(path));
     }
 
-    private ValueProvider<List<PotionEffect>> parseSection(final ConfigurationSection section, final String path) throws MargasException {
-        final ValueGenerator<List<PotionEffect>> generator = () -> parseList(section, path, false);
-        return new DefaultValueProvider<>(parseList(section, path, true), generator, false);
+    private ValueProvider<List<PotionEffect>> parseSection(final ConfigurationSection section, final String path) {
+        return new DefaultValueProvider<>(useDefault -> parseList(section, path, useDefault), false);
     }
 
     private List<PotionEffect> parseList(final ConfigurationSection section, final String path, final boolean useDefault) throws MargasException {

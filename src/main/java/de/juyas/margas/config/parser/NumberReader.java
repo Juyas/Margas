@@ -274,7 +274,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
      * @return a random number provider
      */
     private ValueGenerator<Number> balancedIntRandom(final int min, final int max) {
-        return () -> Math.floor(Math.random() * (max - min + 1)) + min;
+        return useDefault -> Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     /**
@@ -285,7 +285,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
      * @return a random number provider
      */
     private ValueGenerator<Number> balancedDoubleRandom(final double min, final double max) {
-        return () -> Math.random() * (max - min) + min;
+        return useDefault -> Math.random() * (max - min) + min;
     }
 
     /**
@@ -307,7 +307,7 @@ public class NumberReader implements ConfigSectionReader<Number> {
     }
 
     private ValueProvider<Number> create(final ValueGenerator<Number> generator, final Number defaultNumber) {
-        return new DefaultValueProvider<>(defaultNumber, generator, false);
+        return new DefaultValueProvider<>(useDefault -> useDefault ? defaultNumber : generator.generate(false), false);
     }
 
 }
