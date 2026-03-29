@@ -15,6 +15,8 @@ import java.util.Set;
  * Class SectionListReader to read a section list from a configuration section at a given path for a given type.
  *
  * @param <T> the type of the section list
+ * @see ListToSectionConverter
+ * @see SectionMappedListReader
  */
 public class SectionListReader<T> implements ConfigSectionReader<List<T>> {
 
