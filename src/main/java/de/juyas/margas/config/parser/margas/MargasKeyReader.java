@@ -67,7 +67,7 @@ public class MargasKeyReader implements ConfigSectionReader<MargasKey> {
         return new DefaultValueProvider<>(useDefault -> new DefaultMargasKey(identifier, type, name.generate(useDefault), description.generate(useDefault), enchanted), false);
     }
 
-    private record DefaultMargasKey(MargasIdentifier identifier, Material type, TextValue name,
+    private record DefaultMargasKey(KeyIdentifier identifier, Material type, TextValue name,
                                     TextValue description, boolean enchanted) implements MargasKey {
     }
 
@@ -76,10 +76,10 @@ public class MargasKeyReader implements ConfigSectionReader<MargasKey> {
      *
      * @param name the name of the identifier
      */
-    private record KeyIdentifier(String name) implements MargasIdentifier {
+    private record KeyIdentifier(String name) implements MargasIdentifier<MargasKey> {
 
         @Override
-        public MargasType type() {
+        public MargasType<MargasKey> type() {
             return MargasType.CHEST_KEY;
         }
     }
