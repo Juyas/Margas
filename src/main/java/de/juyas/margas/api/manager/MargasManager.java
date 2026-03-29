@@ -13,15 +13,16 @@ import java.util.Optional;
  *
  * @param <T> the type of the elements managed by the manager
  */
-public interface MargasManager<T extends MargasElement> {
+public interface MargasManager<T extends MargasElement<T>> {
 
     /**
      * Adds an element to the manager.
      *
-     * @param element the element to add to the manager
+     * @param element    the element to add to the manager
+     * @param identifier the identifier of the element to add
      * @throws MargasException if an element with the same identifier already exists
      */
-    void add(ValueProvider<T> element) throws MargasException;
+    void add(MargasIdentifier<T> identifier, ValueProvider<T> element) throws MargasException;
 
     /**
      * Returns an element from the manager.
@@ -29,7 +30,7 @@ public interface MargasManager<T extends MargasElement> {
      * @param identifier the identifier of the element to get from the manager
      * @return the element with the given identifier, if it exists, otherwise {@link Optional#empty()}
      */
-    Optional<ValueProvider<T>> get(MargasIdentifier identifier);
+    Optional<ValueProvider<T>> get(MargasIdentifier<T> identifier);
 
     /**
      * Returns a list of elements from the manager by their identifiers.
@@ -40,7 +41,7 @@ public interface MargasManager<T extends MargasElement> {
      * @param identifiers the identifiers of the elements to get from the manager
      * @return a list of elements with the given identifiers
      */
-    List<ValueProvider<T>> get(List<MargasIdentifier> identifiers);
+    List<ValueProvider<T>> get(List<MargasIdentifier<T>> identifiers);
 
     /**
      * Returns all elements from the manager.

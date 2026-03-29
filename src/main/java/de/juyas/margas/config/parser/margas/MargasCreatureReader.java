@@ -113,13 +113,13 @@ public class MargasCreatureReader implements ConfigSectionReader<MargasCreature>
 
         final EnumReader<EntityType> typeReader = new EnumReader<>(EntityType.class);
         final SectionListReader<MargasCreatureAttributeModifier> attributeModifierReader = new SectionListReader<>(
-                new InlineWrapperReader<>("CreatureAttributeModifier", new MargasCreatureAttributeModifierReader(), creatureAttributeModifierManager));
-        final SectionListReader<MargasCreatureEffect> creatureEffectReader = new SectionListReader<>(new InlineWrapperReader<>("CreatureEffect", new MargasCreatureEffectReader(), creatureEffectManager));
-        final InlineWrapperReader<MargasLootTable> lootTableReader = new InlineWrapperReader<>("LootTable", new MargasLootTableReader(lootTableManager, itemManager), lootTableManager);
+                new InlineWrapperReader<>(MargasType.CREATURE_ATTRIBUTE, new MargasCreatureAttributeModifierReader(), creatureAttributeModifierManager));
+        final SectionListReader<MargasCreatureEffect> creatureEffectReader = new SectionListReader<>(new InlineWrapperReader<>(MargasType.CREATURE_EFFECT, new MargasCreatureEffectReader(), creatureEffectManager));
+        final InlineWrapperReader<MargasLootTable> lootTableReader = new InlineWrapperReader<>(MargasType.LOOT_TABLE, new MargasLootTableReader(lootTableManager, itemManager), lootTableManager);
         final SectionMappedListReader<MargasLootTable> lootTablesReader = new SectionMappedListReader<>(lootTableReader);
-        final SectionMappedListReader<MargasItem> equipmentReader = new SectionMappedListReader<>(new InlineWrapperReader<>("Item", new MargasItemReader(), itemManager));
+        final SectionMappedListReader<MargasItem> equipmentReader = new SectionMappedListReader<>(new InlineWrapperReader<>(MargasType.ITEM, new MargasItemReader(), itemManager));
 
-        final MargasIdentifier creatureIdentifier = new CreatureIdentifier(creatureSection.getName());
+        final CreatureIdentifier creatureIdentifier = new CreatureIdentifier(creatureSection.getName());
         final EntityType entityType = typeReader.read(creatureSection, FIELD_TYPE);
         final ValueProvider<List<MargasCreatureEffect>> effects = creatureEffectReader.read(creatureSection, FIELD_EFFECTS);
         final ValueProvider<List<MargasCreatureAttributeModifier>> attributeModifiers = attributeModifierReader.read(creatureSection, FIELD_ATTRIBUTE_MODIFIERS);
@@ -178,17 +178,18 @@ public class MargasCreatureReader implements ConfigSectionReader<MargasCreature>
         }
     }
 
-    private record DefaultCreature(MargasIdentifier identifier, EntityType type, List<MargasCreatureEffect> effects,
+    private record DefaultCreature(CreatureIdentifier identifier, EntityType type,
+                                   List<MargasCreatureEffect> effects,
                                    Map<EquipmentSlot, MargasItem> equipment, MargasLootTable lootTable,
                                    Map<EntityDamageEvent.DamageCause, MargasLootTable> specialLootTables,
                                    List<MargasCreatureAttributeModifier> attributeModifiers) implements MargasCreature {
 
     }
 
-    private record CreatureIdentifier(String name) implements MargasIdentifier {
+    private record CreatureIdentifier(String name) implements MargasIdentifier<MargasCreature> {
 
         @Override
-        public MargasType type() {
+        public MargasType<MargasCreature> type() {
             return MargasType.CREATURE;
         }
     }

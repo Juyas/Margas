@@ -7,6 +7,6 @@ import de.juyas.margas.api.MargasType;
  * Interface MargasArea represents an area configured in the section for {@link MargasType#AREA}.
  */
 @FunctionalInterface
-public interface MargasArea extends MargasElement {
+public interface MargasArea extends MargasElement<MargasArea> {
 
 }

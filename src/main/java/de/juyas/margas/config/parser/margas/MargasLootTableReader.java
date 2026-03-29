@@ -68,13 +68,13 @@ public class MargasLootTableReader implements ConfigSectionReader<MargasLootTabl
             throw new MargasException("Missing margas loot table definition in section '%s' at path '%s'.".formatted(section.getCurrentPath(), path));
         }
 
-        final IdentifierListReader parentReader = new IdentifierListReader();
+        final IdentifierListReader<MargasLootTable> parentReader = new IdentifierListReader<>(MargasType.LOOT_TABLE);
         final LootTableIdentifier identifier = new LootTableIdentifier(lootTableSection.getName());
-        final WeightedListReader<MargasItem> weightedListReader = new WeightedListReader<>(new InlineWrapperReader<>("Item", new MargasItemReader(), margasItemManager));
+        final WeightedListReader<MargasItem> weightedListReader = new WeightedListReader<>(new InlineWrapperReader<>(MargasType.ITEM, new MargasItemReader(), margasItemManager));
         final ValueProvider<WeightedList<ValueProvider<MargasItem>>> itemList = weightedListReader.read(lootTableSection, FIELD_ITEMS);
-        final List<MargasIdentifier> parents = lootTableSection.isList(FIELD_PARENT) ? parentReader.read(lootTableSection, FIELD_PARENT) : new ArrayList<>();
+        final List<MargasIdentifier<MargasLootTable>> parents = lootTableSection.isList(FIELD_PARENT) ? parentReader.read(lootTableSection, FIELD_PARENT) : new ArrayList<>();
         if (lootTableSection.isString(FIELD_PARENT)) {
-            parents.add(new IdentifierReader().read(lootTableSection, FIELD_PARENT));
+            parents.add(new IdentifierReader<>(MargasType.LOOT_TABLE).read(lootTableSection, FIELD_PARENT));
         }
 
         return new DefaultValueProvider<>(useDefault -> new DefaultMargasLootTable(identifier, parents, combine(margasLootTableManager.get(parents), itemList).generate(useDefault)), false);
@@ -96,14 +96,15 @@ public class MargasLootTableReader implements ConfigSectionReader<MargasLootTabl
         return new DefaultValueProvider<>(valueGenerator, false);
     }
 
-    private record DefaultMargasLootTable(MargasIdentifier identifier, List<MargasIdentifier> parents,
+    private record DefaultMargasLootTable(LootTableIdentifier identifier,
+                                          List<MargasIdentifier<MargasLootTable>> parents,
                                           WeightedList<ValueProvider<MargasItem>> items) implements MargasLootTable {
     }
 
-    private record LootTableIdentifier(String name) implements MargasIdentifier {
+    private record LootTableIdentifier(String name) implements MargasIdentifier<MargasLootTable> {
 
         @Override
-        public MargasType type() {
+        public MargasType<MargasLootTable> type() {
             return MargasType.LOOT_TABLE;
         }
     }

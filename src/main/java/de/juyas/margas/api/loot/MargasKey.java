@@ -8,7 +8,7 @@ import org.bukkit.Material;
 /**
  * Interface MargasKey represents a key configured in the section for {@link MargasType#CHEST_KEY}.
  */
-public interface MargasKey extends MargasElement {
+public interface MargasKey extends MargasElement<MargasKey> {
 
     /**
      * Returns the item type of the key.

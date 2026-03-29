@@ -8,7 +8,7 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 /**
  * Interface MargasCreatureAttributeModifier represents an attribute modifier configured for a creature.
  */
-public interface MargasCreatureAttributeModifier extends MargasElement {
+public interface MargasCreatureAttributeModifier extends MargasElement<MargasCreatureAttributeModifier> {
 
     /**
      * Returns the value of the attribute modifier.

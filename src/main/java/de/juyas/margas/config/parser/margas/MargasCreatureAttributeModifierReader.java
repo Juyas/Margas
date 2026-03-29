@@ -106,16 +106,16 @@ public class MargasCreatureAttributeModifierReader implements ConfigSectionReade
         return attribute;
     }
 
-    private record DefaultCreatureAttributeModifier(MargasIdentifier identifier, Number value, Attribute attribute,
+    private record DefaultCreatureAttributeModifier(AttributeIdentifier identifier, Number value, Attribute attribute,
                                                     AttributeModifier.Operation operation, boolean persistent,
                                                     EquipmentSlotGroup slotGroup) implements MargasCreatureAttributeModifier {
 
     }
 
-    private record AttributeIdentifier(String name) implements MargasIdentifier {
+    private record AttributeIdentifier(String name) implements MargasIdentifier<MargasCreatureAttributeModifier> {
 
         @Override
-        public MargasType type() {
+        public MargasType<MargasCreatureAttributeModifier> type() {
             return MargasType.CREATURE_ATTRIBUTE;
         }
     }

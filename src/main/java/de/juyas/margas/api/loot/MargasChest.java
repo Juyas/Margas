@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Interface MargasChest represents a chest configured in the section for {@link MargasType#CHEST}.
  */
-public interface MargasChest extends MargasElement {
+public interface MargasChest extends MargasElement<MargasChest> {
 
     /**
      * Returns the type of the chest.
@@ -31,6 +31,6 @@ public interface MargasChest extends MargasElement {
      *
      * @return the keys to open the chest
      */
-    List<MargasIdentifier> keys();
+    List<MargasIdentifier<MargasKey>> keys();
 
 }

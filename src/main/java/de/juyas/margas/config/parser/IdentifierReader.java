@@ -1,5 +1,6 @@
 package de.juyas.margas.config.parser;
 
+import de.juyas.margas.api.MargasElement;
 import de.juyas.margas.api.MargasException;
 import de.juyas.margas.api.MargasIdentifier;
 import de.juyas.margas.api.MargasType;
@@ -8,8 +9,10 @@ import org.bukkit.configuration.ConfigurationSection;
 
 /**
  * Class IdentifierReader to read an identifier from a configuration section at a given path.
+ *
+ * @param <T> the type of the identifier to be read
  */
-public class IdentifierReader implements ConfigValueReader<MargasIdentifier> {
+public class IdentifierReader<T extends MargasElement<T>> implements ConfigValueReader<MargasIdentifier<T>> {
 
     /**
      * Number of parts of which an identifier is composed.
@@ -17,14 +20,22 @@ public class IdentifierReader implements ConfigValueReader<MargasIdentifier> {
     private static final int IDENTIFIER_PARTS = 2;
 
     /**
-     * Creates a new instance of IdentifierReader.
+     * The type of the identifier to be read.
      */
-    public IdentifierReader() {
+    private final MargasType<T> type;
+
+    /**
+     * Creates a new instance of IdentifierReader.
+     *
+     * @param type the type of the identifier to be read
+     */
+    public IdentifierReader(final MargasType<T> type) {
         super();
+        this.type = type;
     }
 
     @Override
-    public MargasIdentifier read(final ConfigurationSection section, final String path) throws MargasException {
+    public MargasIdentifier<T> read(final ConfigurationSection section, final String path) throws MargasException {
         final String value = section.getString(path);
         if (value == null) {
             throw new MargasException("Identifier definition not found at path '%s' in section '%s'.".formatted(path, section.getCurrentPath()));
@@ -34,7 +45,7 @@ public class IdentifierReader implements ConfigValueReader<MargasIdentifier> {
             throw new MargasException("Invalid identifier definition at path '%s': '%s'".formatted(path, value));
         }
         try {
-            return new Identifier(MargasType.getByName(split[0]), split[1]);
+            return new Identifier<>(type, split[1]);
         } catch (final IllegalArgumentException e) {
             throw new MargasException("Invalid identifier definition at path '%s': '%s'".formatted(path, value), e);
         }
@@ -45,8 +56,10 @@ public class IdentifierReader implements ConfigValueReader<MargasIdentifier> {
      *
      * @param type the type of the identifier
      * @param name the name of the identifier
+     * @param <T>  the type of the element of the identifier
      */
-    private record Identifier(MargasType type, String name) implements MargasIdentifier {
+    private record Identifier<T extends MargasElement<T>>(MargasType<T> type,
+                                                          String name) implements MargasIdentifier<T> {
 
     }
 }

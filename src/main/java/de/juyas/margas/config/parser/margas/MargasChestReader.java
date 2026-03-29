@@ -6,6 +6,7 @@ import de.juyas.margas.api.MargasType;
 import de.juyas.margas.api.config.ConfigSectionReader;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.api.loot.MargasChest;
+import de.juyas.margas.api.loot.MargasKey;
 import de.juyas.margas.api.loot.MargasLootTable;
 import de.juyas.margas.api.manager.MargasManager;
 import de.juyas.margas.config.DefaultValueProvider;
@@ -64,13 +65,13 @@ public class MargasChestReader implements ConfigSectionReader<MargasChest> {
         }
 
         final EnumReader<Material> chestTypeReader = new EnumReader<>(Material.class);
-        final IdentifierReader tableReader = new IdentifierReader();
-        final IdentifierListReader keyReader = new IdentifierListReader();
+        final IdentifierReader<MargasLootTable> tableReader = new IdentifierReader<>(MargasType.LOOT_TABLE);
+        final IdentifierListReader<MargasKey> keyReader = new IdentifierListReader<>(MargasType.CHEST_KEY);
 
         final ChestIdentifier identifier = new ChestIdentifier(chestSection.getName());
         final Material chestType = chestTypeReader.read(chestSection, FIELD_CHEST_TYPE);
-        final List<MargasIdentifier> keys = keyReader.read(chestSection, FIELD_KEY_LIST);
-        final MargasIdentifier table = tableReader.read(chestSection, FIELD_LOOT_TABLE);
+        final List<MargasIdentifier<MargasKey>> keys = keyReader.read(chestSection, FIELD_KEY_LIST);
+        final MargasIdentifier<MargasLootTable> table = tableReader.read(chestSection, FIELD_LOOT_TABLE);
         final Optional<ValueProvider<MargasLootTable>> margasLootTable = lootTableManager.get(table);
         if (margasLootTable.isEmpty()) {
             throw new MargasException("Invalid loot table definition in section '%s' at path '%s'. Identifier '%s' not found.".formatted(section.getCurrentPath(), path + "." + FIELD_LOOT_TABLE, table.full()));
@@ -79,14 +80,15 @@ public class MargasChestReader implements ConfigSectionReader<MargasChest> {
         return new DefaultValueProvider<>(useDefault -> new DefaultMargasChest(identifier, chestType, margasLootTable.get().generate(useDefault), keys), false);
     }
 
-    private record DefaultMargasChest(MargasIdentifier identifier, Material type, MargasLootTable lootTable,
-                                      List<MargasIdentifier> keys) implements MargasChest {
+    private record DefaultMargasChest(ChestIdentifier identifier, Material type,
+                                      MargasLootTable lootTable,
+                                      List<MargasIdentifier<MargasKey>> keys) implements MargasChest {
     }
 
-    private record ChestIdentifier(String name) implements MargasIdentifier {
+    private record ChestIdentifier(String name) implements MargasIdentifier<MargasChest> {
 
         @Override
-        public MargasType type() {
+        public MargasType<MargasChest> type() {
             return MargasType.CHEST;
         }
     }

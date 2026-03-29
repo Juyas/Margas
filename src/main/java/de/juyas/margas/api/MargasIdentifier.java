@@ -2,8 +2,10 @@ package de.juyas.margas.api;
 
 /**
  * Interface MargasIdentifier to identify all elements with a unique id.
+ *
+ * @param <T> the type of the element identified by this identifier
  */
-public interface MargasIdentifier {
+public interface MargasIdentifier<T extends MargasElement<T>> {
 
     /**
      * Separator for type and name.
@@ -16,7 +18,7 @@ public interface MargasIdentifier {
      * @return the full identifier
      */
     default String full() {
-        return type().getName() + TYPE_SEPARATOR + name();
+        return type().name() + TYPE_SEPARATOR + name();
     }
 
     /**
@@ -24,7 +26,7 @@ public interface MargasIdentifier {
      *
      * @return the type of the identifier
      */
-    MargasType type();
+    MargasType<T> type();
 
     /**
      * Returns the name of the identifier.

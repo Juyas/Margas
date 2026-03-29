@@ -102,15 +102,15 @@ public class MargasItemReader implements ConfigSectionReader<MargasItem> {
                 enchantments.generate(useDefault), flags, unbreakable), false);
     }
 
-    private record DefaultMargasItem(MargasIdentifier identifier, Material type, int amount, TextValue name,
+    private record DefaultMargasItem(ItemIdentifier identifier, Material type, int amount, TextValue name,
                                      TextValue description, Map<Enchantment, Integer> enchantments,
                                      Set<ItemFlag> flags, boolean unbreakable) implements MargasItem {
     }
 
-    private record ItemIdentifier(String name) implements MargasIdentifier {
+    private record ItemIdentifier(String name) implements MargasIdentifier<MargasItem> {
 
         @Override
-        public MargasType type() {
+        public MargasType<MargasItem> type() {
             return MargasType.ITEM;
         }
     }

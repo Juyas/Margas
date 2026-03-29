@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Interface MargasItem represents an item configured in the section {@link MargasType#ITEM}.
  */
-public interface MargasItem extends MargasElement {
+public interface MargasItem extends MargasElement<MargasItem> {
 
     /**
      * Returns the material type of the item.

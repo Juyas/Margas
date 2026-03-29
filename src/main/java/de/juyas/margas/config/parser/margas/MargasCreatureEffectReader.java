@@ -80,10 +80,10 @@ public class MargasCreatureEffectReader implements ConfigSectionReader<MargasCre
 
     }
 
-    private record EffectIdentifier(String name) implements MargasIdentifier {
+    private record EffectIdentifier(String name) implements MargasIdentifier<MargasCreatureEffect> {
 
         @Override
-        public MargasType type() {
+        public MargasType<MargasCreatureEffect> type() {
             return MargasType.CREATURE_EFFECT;
         }
     }
