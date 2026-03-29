@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Interface MargasCreatureEffect represents an effect configured for a creature.
  */
-public interface MargasCreatureEffect extends MargasElement {
+public interface MargasCreatureEffect extends MargasElement<MargasCreatureEffect> {
 
     /**
      * Returns the list of effects to be applied.

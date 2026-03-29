@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Interface MargasCreature represents a creature configured in the section for {@link MargasType#CREATURE}.
  */
-public interface MargasCreature extends MargasElement {
+public interface MargasCreature extends MargasElement<MargasCreature> {
 
     /**
      * Returns the type of the creature.

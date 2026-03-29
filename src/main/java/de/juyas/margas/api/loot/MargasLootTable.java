@@ -11,14 +11,14 @@ import java.util.List;
 /**
  * Interface MargasLootTable represents a loot table configured in the section for {@link MargasType#LOOT_TABLE}.
  */
-public interface MargasLootTable extends MargasElement {
+public interface MargasLootTable extends MargasElement<MargasLootTable> {
 
     /**
      * Returns the parents of the loot table.
      *
      * @return the parents of the loot table
      */
-    List<MargasIdentifier> parents();
+    List<MargasIdentifier<MargasLootTable>> parents();
 
     /**
      * Returns the items of the loot table.
