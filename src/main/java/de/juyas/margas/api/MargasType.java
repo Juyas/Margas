@@ -1,138 +1,94 @@
 package de.juyas.margas.api;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import de.juyas.margas.api.creature.MargasCreature;
+import de.juyas.margas.api.creature.MargasCreatureAttributeModifier;
+import de.juyas.margas.api.creature.MargasCreatureEffect;
+import de.juyas.margas.api.group.MargasArea;
+import de.juyas.margas.api.loot.MargasChest;
+import de.juyas.margas.api.loot.MargasItem;
+import de.juyas.margas.api.loot.MargasKey;
+import de.juyas.margas.api.loot.MargasLootTable;
 
 /**
- * Enum MargasType to represent all types of elements loaded from configuration.
+ * Interface MargasType to represent all types of elements loaded from a configuration.
+ *
+ * @param <T> the type of the elements of this type
  */
-public enum MargasType {
+public interface MargasType<T extends MargasElement<T>> {
 
     /**
      * This type represents an entity that supposed to be spawned in margas areas.
      */
-    CREATURE("mob", "mobs"),
+    MargasType<MargasCreature> CREATURE = new MargasTypeImpl<>(MargasCreature.class, "mob", "mobs");
 
     /**
      * This type represents an effect that supposed to be applied to or by margas creatures.
      */
-    CREATURE_EFFECT("effect", "effects"),
+    MargasType<MargasCreatureEffect> CREATURE_EFFECT = new MargasTypeImpl<>(MargasCreatureEffect.class, "effect", "effects");
 
     /**
      * This type represents an attribute that supposed to modify the attributes of margas creatures.
      */
-    CREATURE_ATTRIBUTE("attribute", "attributes"),
+    MargasType<MargasCreatureAttributeModifier> CREATURE_ATTRIBUTE = new MargasTypeImpl<>(MargasCreatureAttributeModifier.class, "attribute", "attributes");
 
     /**
      * This type represents an item that supposed to be used in margas areas as loot or equipment.
      */
-    ITEM("item", "items"),
+    MargasType<MargasItem> ITEM = new MargasTypeImpl<>(MargasItem.class, "item", "items");
 
     /**
      * This type represents a margas area.
      */
-    AREA("area", "areas"),
+    MargasType<MargasArea> AREA = new MargasTypeImpl<>(MargasArea.class, "area", "areas");
 
     /**
      * This type represents a chest that be placed in margas areas and populated with items for players to loot.
      */
-    CHEST("chest", "chests"),
+    MargasType<MargasChest> CHEST = new MargasTypeImpl<>(MargasChest.class, "chest", "chests");
 
     /**
      * This type represents a key that be treated as loot as well as a key to open loot chests.
      */
-    CHEST_KEY("key", "chest-keys"),
+    MargasType<MargasKey> CHEST_KEY = new MargasTypeImpl<>(MargasKey.class, "key", "keys");
 
     /**
      * This type represents a loot table that be used to randomly generate items and manipulate the chances.
      */
-    LOOT_TABLE("table", "loot-tables");
+    MargasType<MargasLootTable> LOOT_TABLE = new MargasTypeImpl<>(MargasLootTable.class, "table", "tables");
 
     /**
-     * A lookup map for {@link MargasType} by name.
-     */
-    private static final Map<String, MargasType> BY_NAME = createLookupMap(MargasType::getName);
-
-    /**
-     * A lookup map for {@link MargasType} by section name.
-     */
-    private static final Map<String, MargasType> BY_SECTION_NAME = createLookupMap(MargasType::getSectionName);
-
-    /**
-     * The name of the type used for identifiers.
-     */
-    private final String name;
-
-    /**
-     * The section name of the type used for configurations.
-     */
-    private final String sectionName;
-
-    /**
-     * Creates a new instance of the enum.
+     * Returns the class of the element of this type.
      *
-     * @param name        the name of the type
-     * @param sectionName the section name of the type
+     * @return the class of the element of this type
      */
-    MargasType(final String name, final String sectionName) {
-        this.name = name;
-        this.sectionName = sectionName;
-    }
-
-    /**
-     * Returns the type by the given name.
-     *
-     * @param name the name of the type to get
-     * @return the type or null if not found
-     */
-    public static MargasType getByName(final String name) {
-        return BY_NAME.get(name.toLowerCase(Locale.ROOT));
-    }
-
-    /**
-     * Returns the type by the given section name.
-     *
-     * @param sectionName the section name
-     * @return the type or null if not found
-     */
-    public static MargasType getBySectionName(final String sectionName) {
-        return BY_SECTION_NAME.get(sectionName.toLowerCase(Locale.ROOT));
-    }
-
-    /**
-     * Creates a lookup map for the given key extractor.
-     * Used only internally.
-     *
-     * @param keyExtractor the key extractor function
-     * @return the lookup map
-     */
-    private static Map<String, MargasType> createLookupMap(final Function<MargasType, String> keyExtractor) {
-        return Arrays.stream(values())
-                .collect(Collectors.toUnmodifiableMap(
-                        type -> keyExtractor.apply(type).toLowerCase(Locale.ROOT),
-                        Function.identity()
-                ));
-    }
+    Class<T> elementClass();
 
     /**
      * Returns the name of the type.
      *
      * @return the name of the type
      */
-    public String getName() {
-        return name;
-    }
+    String name();
 
     /**
      * Returns the section name of the type.
      *
      * @return the section name of the type
      */
-    public String getSectionName() {
-        return sectionName;
+    String sectionName();
+
+    /**
+     * Implementation class for MargasType.
+     * Used only internally.
+     *
+     * @param <T>          the type of the element of this type
+     * @param elementClass the class of the element of this type
+     * @param name         the name of the type
+     * @param sectionName  the section name of the type
+     */
+    record MargasTypeImpl<T extends MargasElement<T>>(Class<T> elementClass, String name,
+                                                      String sectionName) implements MargasType<T> {
+
     }
 
 }
