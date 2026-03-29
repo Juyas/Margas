@@ -19,10 +19,10 @@ public interface MargasManager<T extends MargasElement<T>> {
      * Adds an element to the manager.
      *
      * @param element    the element to add to the manager
-     * @param identifier the identifier of the element to add
+     * @param identifier the identifier name of the element to add
      * @throws MargasException if an element with the same identifier already exists
      */
-    void add(MargasIdentifier<T> identifier, ValueProvider<T> element) throws MargasException;
+    void add(String identifier, ValueProvider<T> element) throws MargasException;
 
     /**
      * Returns an element from the manager.
