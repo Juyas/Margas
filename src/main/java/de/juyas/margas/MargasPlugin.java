@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * The main class of the plugin.
@@ -31,11 +32,7 @@ public class MargasPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        try {
-            loadConfigurationFiles();
-        } catch (final MargasException e) {
-            getLogger().severe("Could not load configuration files: " + e.getMessage());
-        }
+        loadConfigurationFiles();
     }
 
     @Override
@@ -43,7 +40,7 @@ public class MargasPlugin extends JavaPlugin {
         // Empty
     }
 
-    private void loadConfigurationFiles() throws MargasException {
+    private void loadConfigurationFiles() {
         final File dataFolder = getDataFolder();
         if (!dataFolder.exists() && !dataFolder.mkdirs()) {
             getLogger().severe("Could not create data folder for Margas plugin.");
@@ -52,7 +49,11 @@ public class MargasPlugin extends JavaPlugin {
         final List<ConfigurationSection> sections = new ArrayList<>();
         ConfigurationLoader.load(dataFolder, sections);
         for (final ConfigurationSection section : sections) {
-            elementManager.loadConfiguration(section, getLogger());
+            try {
+                elementManager.loadConfiguration(section, getLogger());
+            } catch (final MargasException e) {
+                getLogger().log(Level.SEVERE, "Could not load configuration file '%s'.".formatted(section), e);
+            }
         }
     }
 }
