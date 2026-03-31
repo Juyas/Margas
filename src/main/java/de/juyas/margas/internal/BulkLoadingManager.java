@@ -92,8 +92,12 @@ public class BulkLoadingManager<T extends MargasElement<T>> implements MargasMan
         }
         final Set<String> elements = elementsSection.getKeys(false);
         for (final String element : elements) {
-            final ValueProvider<T> valueProvider = elementReaderSupplier.read(elementsSection, element);
-            add(element, valueProvider);
+            try {
+                final ValueProvider<T> valueProvider = elementReaderSupplier.read(elementsSection, element);
+                add(element, valueProvider);
+            } catch (final MargasException e) {
+                throw new MargasException("Invalid element definition at path '%s.%s'.".formatted(margasType.sectionName(), element), e);
+            }
         }
     }
 
