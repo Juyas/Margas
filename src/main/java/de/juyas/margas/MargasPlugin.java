@@ -50,7 +50,7 @@ public class MargasPlugin extends JavaPlugin {
         ConfigurationLoader.load(dataFolder, sections);
         for (final Map.Entry<File, ConfigurationSection> sectionEntry : sections.entrySet()) {
             try {
-                elementManager.loadConfiguration(sectionEntry.getValue(), getLogger());
+                elementManager.loadConfiguration(sectionEntry.getValue());
             } catch (final MargasException e) {
                 getLogger().log(Level.SEVERE, "Error while loading file '%s'.".formatted(sectionEntry.getKey()), e);
             }

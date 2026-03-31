@@ -85,10 +85,9 @@ public class MargasElementManager {
      * Attempts to load the configuration and its elements for all managers.
      *
      * @param section the configuration section to load the elements from
-     * @param logger  the logger to log messages to
      * @throws MargasException if an error occurs during loading the configuration or elements for any manager
      */
-    public void loadConfiguration(final ConfigurationSection section, final Logger logger) throws MargasException {
+    public void loadConfiguration(final ConfigurationSection section) throws MargasException {
         clear();
         for (final BulkLoadingManager<?> manager : loadedManagers.values()) {
             manager.load(section);
