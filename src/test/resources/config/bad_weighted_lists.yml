@@ -1,0 +1,31 @@
+weighted_lists:
+  # Missing weight field
+  missing_weight:
+    entry1:
+      value: "text1"
+
+  # Missing value field
+  missing_value:
+    entry1:
+      weight: 10
+
+  # Invalid weight (negative)
+  negative_weight:
+    entry1:
+      value: "text1"
+      weight: -5
+
+  # Invalid weight (not a number)
+  invalid_weight_type:
+    entry1:
+      value: "text1"
+      weight: "not_a_number"
+
+  # Direct string value instead of structure
+  invalid_structure: "just a string"
+
+  # Weight exceeds Integer.MAX_VALUE
+  weight_overflow:
+    entry1:
+      value: "text1"
+      weight: 9223372036854775807

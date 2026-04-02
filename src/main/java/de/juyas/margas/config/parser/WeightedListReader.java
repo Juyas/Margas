@@ -9,6 +9,9 @@ import de.juyas.margas.config.DefaultValueProvider;
 import de.juyas.margas.config.DefaultWeightedList;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class WeightedListReader to read a weighted list from a configuration section at a given path.
  *
@@ -20,6 +23,11 @@ public class WeightedListReader<T> implements ConfigSectionReader<WeightedList<V
      * The name of the field containing the weight of an element.
      */
     private static final String FIELD_WEIGHT = "weight";
+
+    /**
+     * The name of the field containing the value of an element.
+     */
+    private static final String FIELD_VALUE = "value";
 
     /**
      * The reader to read the elements of the weighted list.
@@ -46,19 +54,26 @@ public class WeightedListReader<T> implements ConfigSectionReader<WeightedList<V
         throw new MargasException("Invalid weighted identifier list definition at path '%s'.".formatted(path));
     }
 
-    private ValueProvider<WeightedList<ValueProvider<T>>> parseSection(final ConfigurationSection section, final String path) {
+    private ValueProvider<WeightedList<ValueProvider<T>>> parseSection(final ConfigurationSection section, final String path) throws MargasException {
         return new DefaultValueProvider<>(createGenerator(section, path), false);
     }
 
-    private ValueGenerator<WeightedList<ValueProvider<T>>> createGenerator(final ConfigurationSection section, final String path) {
+    private ValueGenerator<WeightedList<ValueProvider<T>>> createGenerator(final ConfigurationSection section, final String path) throws MargasException {
         final NumberReader numberReader = new NumberReader(0, Integer.MAX_VALUE);
+        final ConfigurationSection listSection = section.getConfigurationSection(path);
+        if (listSection == null) {
+            throw new MargasException("Invalid weighted list definition at path '%s'.".formatted(path));
+        }
+        final List<ValueProvider<T>> values = new ArrayList<>();
+        final List<ValueProvider<Number>> weights = new ArrayList<>();
+        for (final String key : listSection.getKeys(false)) {
+            values.add(elementReader.read(listSection, key + "." + FIELD_VALUE));
+            weights.add(numberReader.read(listSection, key + "." + FIELD_WEIGHT));
+        }
         return useDefault -> {
             final WeightedList<ValueProvider<T>> weightedList = new DefaultWeightedList<>();
-            for (final String key : section.getKeys(false)) {
-                final String pathDown = path + "." + key;
-                final ValueProvider<T> valueProvider = elementReader.read(section, pathDown);
-                final ValueProvider<Number> weight = numberReader.read(section, pathDown + "." + FIELD_WEIGHT);
-                weightedList.add(valueProvider, useDefault ? weight.defaultValue() : weight.generate());
+            for (int i = 0; i < values.size(); i++) {
+                weightedList.add(values.get(i), weights.get(i).generate(useDefault));
             }
             return weightedList;
         };
