@@ -62,9 +62,6 @@ public class SectionMappedListReader<T> implements ConfigSectionReader<List<Map.
         }
         final List<Map.Entry<String, ValueProvider<T>>> elementList = new ArrayList<>(keys.size());
         for (final String key : keys) {
-            if (!elements.isConfigurationSection(key)) {
-                throw new MargasException("Invalid map-list definition at path '%s'. No section at key: '%s'".formatted(path, key));
-            }
             final ValueProvider<T> element = elementReader.read(elements, key);
             elementList.add(Map.entry(key, element));
         }

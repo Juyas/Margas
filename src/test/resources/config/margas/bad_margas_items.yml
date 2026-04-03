@@ -1,0 +1,68 @@
+# Invalid test cases for MargasItemReader
+items:
+  # Missing required 'type' field
+  missing_type:
+    amount: 1
+    name: "Test Item"
+
+  # Invalid material type
+  invalid_material:
+    type: "INVALID_MATERIAL_NAME"
+    amount: 1
+
+  # Negative amount
+  negative_amount:
+    type: DIAMOND_SWORD
+    amount: -5
+
+  # Amount exceeding maximum (64)
+  exceeds_max_amount:
+    type: DIAMOND_SWORD
+    amount: 100
+
+  # Amount of zero
+  zero_amount:
+    type: DIAMOND_SWORD
+    amount: 0
+
+  # Invalid flag value
+  invalid_flag:
+    type: DIAMOND_SWORD
+    flags:
+      - INVALID_FLAG
+
+  # Malformed structure (not a configuration section)
+  malformed_item: "just a string"
+
+  # Empty configuration section
+  empty_section: { }
+
+  # Null type value
+  null_type:
+    type: null
+    amount: 1
+
+  # Empty string as type
+  empty_type:
+    type: ""
+    amount: 1
+
+  # All fields empty or null
+  all_empty:
+    type: null
+    amount: null
+    name: null
+    description: null
+
+  # Amount as string instead of number
+  string_amount:
+    type: DIAMOND_SWORD
+    amount: "five"
+
+  # Flags as string instead of list
+  string_flags:
+    type: DIAMOND_SWORD
+    amount: 1
+    flags: "HIDE_ENCHANTS"
+  
+
