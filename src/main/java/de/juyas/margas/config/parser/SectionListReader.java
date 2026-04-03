@@ -50,14 +50,20 @@ public class SectionListReader<T> implements ConfigSectionReader<List<T>> {
     }
 
     private ValueGenerator<List<T>> createList(final ConfigurationSection section, final String path) throws MargasException {
-        final Set<String> keys = section.getKeys(false);
+        final ConfigurationSection elements = section.getConfigurationSection(path);
+        if (elements == null) {
+            throw new MargasException("Invalid list definition at path '%s'.".formatted(path));
+        }
+        final Set<String> keys = elements.getKeys(false);
+        if (keys.isEmpty()) {
+            throw new MargasException("Invalid list definition at path '%s'. Nothing at key: '%s'".formatted(path, keys));
+        }
         final List<ValueProvider<T>> elementList = new ArrayList<>(keys.size());
         for (final String key : keys) {
-            final ConfigurationSection configurationSection = section.getConfigurationSection(key);
-            if (configurationSection == null) {
+            if (!elements.isConfigurationSection(key)) {
                 throw new MargasException("Invalid list definition at path '%s'. Nothing at key: '%s'".formatted(path, key));
             }
-            final ValueProvider<T> element = elementReader.read(configurationSection, path);
+            final ValueProvider<T> element = elementReader.read(elements, key);
             elementList.add(element);
         }
         return useDefault -> {

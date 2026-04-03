@@ -1,0 +1,52 @@
+sections:
+  # Not a list or section - just a plain value
+  plain_value: "this is not a list"
+
+  # Empty section
+  empty_section:
+
+  # Section with non-section children (mixed types)
+  mixed_types:
+    element1:
+      default: 5
+      min: 1
+      max: 10
+    element2: "plain string instead of section"
+    element3: 42
+
+  # List with non-section elements
+  list_with_plain_values:
+    - "string value"
+    - 123
+    - true
+
+  # Section with only plain values as children
+  only_plain_children:
+    key1: "value1"
+    key2: 123
+    key3: true
+
+  # Nested structure that's too deep/malformed
+  invalid_nesting:
+    element1:
+      nested:
+        too_deep:
+          default: 5
+
+  # Mix of valid sections and invalid entries
+  partial_invalid:
+    valid_element:
+      default: 10
+      min: 5
+      max: 15
+    invalid_element: "not a section"
+    another_invalid: 999
+
+  # Boolean value instead of list/section
+  boolean_value: true
+
+  # Number value instead of list/section
+  number_value: 42
+
+  # Null value
+  null_value: null
