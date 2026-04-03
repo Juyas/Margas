@@ -60,9 +60,6 @@ public class SectionListReader<T> implements ConfigSectionReader<List<T>> {
         }
         final List<ValueProvider<T>> elementList = new ArrayList<>(keys.size());
         for (final String key : keys) {
-            if (!elements.isConfigurationSection(key)) {
-                throw new MargasException("Invalid list definition at path '%s'. Nothing at key: '%s'".formatted(path, key));
-            }
             final ValueProvider<T> element = elementReader.read(elements, key);
             elementList.add(element);
         }

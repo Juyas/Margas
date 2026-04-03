@@ -1,0 +1,35 @@
+items:
+  basic_sword:
+    type: DIAMOND_SWORD
+    amount: 1
+    name: "Epic Sword"
+    description: "A legendary weapon"
+    flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
+    unbreakable: true
+
+  simple_apple:
+    type: APPLE
+    amount: 16
+
+  custom_bow:
+    type: BOW
+    amount: 1
+    name: "Hunter's Bow"
+    unbreakable: false
+
+  golden_helmet:
+    type: GOLDEN_HELMET
+    amount: 1
+    description: "Shiny protective gear"
+    flags:
+      - HIDE_UNBREAKABLE
+    unbreakable: true
+
+  stack_of_arrows:
+    type: ARROW
+    amount: 64
+
+  basic_apple:
+    type: APPLE
