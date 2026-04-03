@@ -69,20 +69,28 @@ public class MargasElementManager {
     }
 
     /**
+     * Prints information about the loaded elements.
+     *
+     * @param logger the logger to log messages to
+     */
+    public void printInfo(final Logger logger) {
+        final String info = loadedManagers.entrySet().stream()
+                .filter(entry -> !entry.getValue().all().isEmpty())
+                .map(entry -> "%s elements of type %s".formatted(entry.getValue().all().size(), entry.getKey().name()))
+                .collect(Collectors.joining(", "));
+        logger.info("Loaded %s".formatted(info));
+    }
+
+    /**
      * Attempts to load the configuration and its elements for all managers.
      *
      * @param section the configuration section to load the elements from
-     * @param logger  the logger to log messages to
      * @throws MargasException if an error occurs during loading the configuration or elements for any manager
      */
-    public void loadConfiguration(final ConfigurationSection section, final Logger logger) throws MargasException {
+    public void loadConfiguration(final ConfigurationSection section) throws MargasException {
         clear();
         for (final BulkLoadingManager<?> manager : loadedManagers.values()) {
             manager.load(section);
         }
-        final String info = loadedManagers.entrySet().stream()
-                .map(entry -> "%s elements of type %s".formatted(entry.getValue().all().size(), entry.getKey().name()))
-                .collect(Collectors.joining(", "));
-        logger.info("Loaded %s".formatted(info));
     }
 }

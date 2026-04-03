@@ -4,8 +4,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Class ConfigurationLoader to load all configuration files from a folder and all subfolders.
@@ -22,14 +22,14 @@ public final class ConfigurationLoader {
      * Loads all configuration files from the given folder and all subfolders into the given list.
      *
      * @param sourceFolder the folder to load the configuration files from
-     * @param sections     the list to add the loaded configuration sections to
+     * @param sections     the map to add the loaded configuration sections to
      */
-    public static void load(final File sourceFolder, final List<ConfigurationSection> sections) {
+    public static void load(final File sourceFolder, final Map<File, ConfigurationSection> sections) {
         final File[] files = sourceFolder.listFiles(file -> file.getName().toLowerCase(Locale.ROOT).endsWith(".yml"));
         if (files != null) {
             for (final File file : files) {
                 final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-                sections.add(configuration);
+                sections.put(file, configuration);
             }
         }
         final File[] folders = sourceFolder.listFiles(File::isDirectory);

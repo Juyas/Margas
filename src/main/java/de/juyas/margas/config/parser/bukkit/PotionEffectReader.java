@@ -108,7 +108,7 @@ public class PotionEffectReader implements ConfigSectionReader<PotionEffect> {
         if (section.isString(path)) {
             return parseInline(section, path);
         }
-        throw new MargasException("Invalid potion effect definition at path '%s'.".formatted(path));
+        throw new MargasException("Invalid potion effect definition in section '%s' at path '%s'.".formatted(section.getCurrentPath(), path));
     }
 
     /**

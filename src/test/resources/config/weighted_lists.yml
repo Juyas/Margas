@@ -1,0 +1,79 @@
+weighted_lists:
+  list_syntax_simple:
+    - value: "List item one"
+      weight: 30
+    - value: "List item two"
+      weight: 40
+    - value: "List item three"
+      weight: 30
+
+  list_syntax_mixed_weights:
+    - value: "Very common"
+      weight: 200
+    - value: "Common"
+      weight: 50
+    - value: "Rare"
+      weight: 5
+    - value: "Very rare"
+      weight: 1
+
+  list_syntax_single_item:
+    - value: "Only list item"
+      weight: 100
+
+  list_with_multiline_text:
+    - value: |
+        This is a multi-line text block.
+        It can span multiple lines and preserve formatting.
+        Each line will be kept as part of the value.
+      weight: 50
+    - value: |
+        Another large block of text.
+        With several lines included.
+        Testing parsing of longer content.
+        This helps verify that the parser handles
+        substantial text content correctly.
+      weight: 30
+    - value: "Short text"
+      weight: 20
+
+  list_with_list_values:
+    - value:
+        - "First line of text"
+        - "Second line of text"
+        - "Third line of text"
+      weight: 60
+    - value:
+        - "Another multi-line"
+        - "text using list syntax"
+      weight: 40
+
+  list_complex_mixed:
+    - value: |
+        A large paragraph that describes something important.
+        This could be a quest description or narrative text.
+        It spans multiple lines to test the parser's ability
+        to handle more substantial text content.
+      weight: 100
+    - value:
+        - "Line one of list value"
+        - "Line two of list value"
+        - "Line three of list value"
+      weight: 75
+    - value: "Simple short text"
+      weight: 50
+    - value: |
+        Yet another multi-line block.
+        Testing various combinations.
+      weight: 25
+
+  list_with_special_characters:
+    - value: "Text with special symbols: @#$%^&*()"
+      weight: 40
+    - value: "Unicode characters: Ñoño, Über, 日本語, émojis: 🎮 ⚔️ 🏆"
+      weight: 30
+    - value: |
+        Multi-line with special chars:
+        Symbols: []{}|\\<>?
+        Quotes: "double" and 'single'
+      weight: 30

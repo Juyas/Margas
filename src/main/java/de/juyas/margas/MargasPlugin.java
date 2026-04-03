@@ -8,8 +8,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * The main class of the plugin.
@@ -31,11 +32,7 @@ public class MargasPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        try {
-            loadConfigurationFiles();
-        } catch (final MargasException e) {
-            getLogger().severe("Could not load configuration files: " + e.getMessage());
-        }
+        loadConfigurationFiles();
     }
 
     @Override
@@ -43,16 +40,21 @@ public class MargasPlugin extends JavaPlugin {
         // Empty
     }
 
-    private void loadConfigurationFiles() throws MargasException {
+    private void loadConfigurationFiles() {
         final File dataFolder = getDataFolder();
         if (!dataFolder.exists() && !dataFolder.mkdirs()) {
             getLogger().severe("Could not create data folder for Margas plugin.");
             Bukkit.getPluginManager().disablePlugin(this);
         }
-        final List<ConfigurationSection> sections = new ArrayList<>();
+        final Map<File, ConfigurationSection> sections = new HashMap<>();
         ConfigurationLoader.load(dataFolder, sections);
-        for (final ConfigurationSection section : sections) {
-            elementManager.loadConfiguration(section, getLogger());
+        for (final Map.Entry<File, ConfigurationSection> sectionEntry : sections.entrySet()) {
+            try {
+                elementManager.loadConfiguration(sectionEntry.getValue());
+            } catch (final MargasException e) {
+                getLogger().log(Level.SEVERE, "Error while loading file '%s'.".formatted(sectionEntry.getKey()), e);
+            }
         }
+        elementManager.printInfo(getLogger());
     }
 }
