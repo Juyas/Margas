@@ -1,0 +1,19 @@
+keys:
+  test_key1:
+    item: stone
+    name: "Stone Key"
+  test_key2:
+    item: diamond_sword
+    name: "Diamond Sword Key"
+    description: "A rare key to open the chest"
+  test_key3:
+    item: iron_sword
+    name: "Iron Sword Key"
+    enchanted: true
+  test_key4:
+    item: golden_sword
+    name: "Golden Sword Key"
+    description:
+      - "A key to open the chest with style"
+      - "and with a fancy enchantment!"
+    enchanted: true

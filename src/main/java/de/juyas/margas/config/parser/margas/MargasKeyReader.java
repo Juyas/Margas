@@ -8,6 +8,7 @@ import de.juyas.margas.api.config.TextValue;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.api.loot.MargasKey;
 import de.juyas.margas.config.DefaultValueProvider;
+import de.juyas.margas.config.EmptyTextValue;
 import de.juyas.margas.config.parser.EnumReader;
 import de.juyas.margas.config.parser.TextReader;
 import org.bukkit.Material;
@@ -61,7 +62,7 @@ public class MargasKeyReader implements ConfigSectionReader<MargasKey> {
         final KeyIdentifier identifier = new KeyIdentifier(keySection.getName());
         final Material type = typeReader.read(keySection, FIELD_ITEM_TYPE);
         final ValueProvider<TextValue> name = textReader.read(keySection, FIELD_NAME);
-        final ValueProvider<TextValue> description = textReader.read(keySection, FIELD_DESCRIPTION);
+        final ValueProvider<TextValue> description = keySection.contains(FIELD_DESCRIPTION) ? textReader.read(keySection, FIELD_DESCRIPTION) : new DefaultValueProvider<>(new EmptyTextValue());
         final boolean enchanted = keySection.getBoolean(FIELD_ENCHANTED, false);
 
         return new DefaultValueProvider<>(useDefault -> new DefaultMargasKey(identifier, type, name.generate(useDefault), description.generate(useDefault), enchanted), false);

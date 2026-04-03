@@ -1,0 +1,9 @@
+keys:
+  test_key1:
+    item: stone
+  test_key2:
+    name: "Diamond Sword Key"
+    description: "A rare key to open the chest"
+  test_key3:
+    item: asdasdadad
+    name: "Iron Sword Key"
