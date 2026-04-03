@@ -44,7 +44,7 @@ public class SectionMappedListReader<T> implements ConfigSectionReader<List<Map.
         if (section.isList(path)) {
             return parseSection(ListToSectionConverter.convert(section, path), path);
         }
-        throw new MargasException("Invalid section list definition in section '%s' at path '%s'.".formatted(section.getCurrentPath(), path));
+        throw new MargasException("Invalid section map-list definition in section '%s' at path '%s'.".formatted(section.getCurrentPath(), path));
     }
 
     private ValueProvider<List<Map.Entry<String, T>>> parseSection(final ConfigurationSection section, final String path) throws MargasException {
@@ -52,14 +52,20 @@ public class SectionMappedListReader<T> implements ConfigSectionReader<List<Map.
     }
 
     private ValueGenerator<List<Map.Entry<String, T>>> createList(final ConfigurationSection section, final String path) throws MargasException {
-        final Set<String> keys = section.getKeys(false);
+        final ConfigurationSection elements = section.getConfigurationSection(path);
+        if (elements == null) {
+            throw new MargasException("Invalid map-list definition in section '%s' at path '%s'. No section at path".formatted(section.getCurrentPath(), path));
+        }
+        final Set<String> keys = elements.getKeys(false);
+        if (keys.isEmpty()) {
+            throw new MargasException("Invalid map-list definition at path '%s'. No keys found.".formatted(path));
+        }
         final List<Map.Entry<String, ValueProvider<T>>> elementList = new ArrayList<>(keys.size());
         for (final String key : keys) {
-            final ConfigurationSection configurationSection = section.getConfigurationSection(key);
-            if (configurationSection == null) {
-                throw new MargasException("Invalid list definition at path '%s'. Nothing at key: '%s'".formatted(path, key));
+            if (!elements.isConfigurationSection(key)) {
+                throw new MargasException("Invalid map-list definition at path '%s'. No section at key: '%s'".formatted(path, key));
             }
-            final ValueProvider<T> element = elementReader.read(configurationSection, path);
+            final ValueProvider<T> element = elementReader.read(elements, key);
             elementList.add(Map.entry(key, element));
         }
         return useDefault -> {
