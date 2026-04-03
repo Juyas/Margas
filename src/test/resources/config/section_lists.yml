@@ -1,0 +1,58 @@
+sections:
+  simple_list:
+    - default: 5
+      min: 1
+      max: 10
+    - default: 10
+      range: 5-15
+
+  section_list:
+    element1:
+      default: 5
+      min: 1
+      max: 10
+    element2:
+      default: 10
+      range: 5-15
+
+  single_element:
+    only_one:
+      default: 100
+      min: 50
+      max: 150
+
+  nested_list:
+    - default: 1
+      min: 0
+      max: 2
+    - default: 2
+      min: 1
+      max: 3
+    - default: 3
+      min: 2
+      max: 4
+
+  large_list:
+    item1:
+      default: 10
+      range: 5-15
+    item2:
+      default: 20
+      range: 15-25
+    item3:
+      default: 30
+      range: 25-35
+    item4:
+      default: 40
+      range: 35-45
+    item5:
+      default: 50
+      range: 45-55
+    item6:
+      default: 60
+      min: 55
+      max: 65
+    item7:
+      default: 70
+      min: 65
+      max: 75
