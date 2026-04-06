@@ -7,9 +7,8 @@ import de.juyas.margas.api.MargasType;
 import de.juyas.margas.api.config.ConfigSectionReader;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.api.manager.MargasManager;
+import de.juyas.margas.config.DefaultValueProvider;
 import org.bukkit.configuration.ConfigurationSection;
-
-import java.util.Optional;
 
 /**
  * Class InlineWrapperReader to read an inline identifier from a configuration section for another reader.
@@ -51,11 +50,11 @@ public class InlineWrapperReader<T extends MargasElement<T>> implements ConfigSe
         if (section.isString(path)) {
             final IdentifierReader<T> identifierReader = new IdentifierReader<>(margasType);
             final MargasIdentifier<T> margasIdentifier = identifierReader.read(section, path);
-            final Optional<ValueProvider<T>> valueProvider = manager.get(margasIdentifier);
-            if (valueProvider.isPresent()) {
-                return valueProvider.get();
-            }
-            throw new MargasException("Invalid inline identifier definition in section '%s' at path '%s'. Identifier '%s' not found for type '%s'.".formatted(section.getCurrentPath(), path, margasIdentifier.full(), margasType.name()));
+            return new DefaultValueProvider<>(useDefault -> manager.get(margasIdentifier)
+                    .orElseThrow(
+                            () -> new MargasException("Invalid inline identifier definition in section '%s' at path '%s'. Identifier '%s' not found for type '%s'."
+                                    .formatted(section.getCurrentPath(), path, margasIdentifier.full(), margasType.name())))
+                    .generate(useDefault), false);
         }
         return reader.read(section, path);
     }
