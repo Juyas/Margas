@@ -126,39 +126,11 @@ public class MargasCreatureReader implements ConfigSectionReader<MargasCreature>
         final ValueProvider<List<Map.Entry<String, MargasLootTable>>> lootTableEntries = lootTablesReader.read(creatureSection, FIELD_LOOT_TABLE);
         final ValueProvider<MargasLootTable> defaultLootTable = lootTableReader.read(creatureSection, FIELD_LOOT_TABLE + '.' + FIELD_LOOT_DEFAULT_TABLE);
         final ValueProvider<List<Map.Entry<String, MargasItem>>> equipmentEntries = equipmentReader.read(creatureSection, FIELD_EQUIPMENT);
-
-        validateLootTableDamageCauses(lootTableEntries.generate(true).stream().map(Map.Entry::getKey).toList());
         final ValueProvider<Map<EntityDamageEvent.DamageCause, MargasLootTable>> lootTables = polishList(EntityDamageEvent.DamageCause.class, lootTableEntries);
-
-        validateEquipmentItemSlots(equipmentEntries.generate(true).stream().map(Map.Entry::getKey).toList());
         final ValueProvider<Map<EquipmentSlot, MargasItem>> equipment = polishList(EquipmentSlot.class, equipmentEntries);
 
         return new DefaultValueProvider<>(useDefault -> new DefaultCreature(creatureIdentifier, entityType,
                 effects.generate(useDefault), equipment.generate(useDefault), defaultLootTable.generate(useDefault), lootTables.generate(useDefault), attributeModifiers.generate(useDefault)), false);
-    }
-
-    private void validateLootTableDamageCauses(final List<String> damageCauses) throws MargasException {
-        boolean hasDefault = false;
-        for (final String damageCause : damageCauses) {
-            if (FIELD_LOOT_DEFAULT_TABLE.equals(damageCause)) {
-                if (hasDefault) {
-                    throw new MargasException("Invalid creature's loot table definition: Multiple default loot tables defined.");
-                }
-                hasDefault = true;
-                continue;
-            }
-            if (parseEnum(EntityDamageEvent.DamageCause.class, damageCause).isEmpty()) {
-                throw new MargasException("Unrecognized damage cause in creature's loot table definition: '%s'".formatted(damageCause));
-            }
-        }
-    }
-
-    private void validateEquipmentItemSlots(final List<String> equipmentSlots) throws MargasException {
-        for (final String equipmentSlot : equipmentSlots) {
-            if (parseEnum(EquipmentSlot.class, equipmentSlot).isEmpty()) {
-                throw new MargasException("Unrecognized equipment slot in creature's equipment definition: '%s'".formatted(equipmentSlot));
-            }
-        }
     }
 
     private <E extends Enum<E>, T> ValueProvider<Map<E, T>> polishList(final Class<E> enumClass, final ValueProvider<List<Map.Entry<String, T>>> lootTableEntries) {
