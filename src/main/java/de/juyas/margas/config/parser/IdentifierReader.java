@@ -15,11 +15,6 @@ import org.bukkit.configuration.ConfigurationSection;
 public class IdentifierReader<T extends MargasElement<T>> implements ConfigValueReader<MargasIdentifier<T>> {
 
     /**
-     * Number of parts of which an identifier is composed.
-     */
-    private static final int IDENTIFIER_PARTS = 2;
-
-    /**
      * The type of the identifier to be read.
      */
     private final MargasType<T> type;
@@ -40,12 +35,8 @@ public class IdentifierReader<T extends MargasElement<T>> implements ConfigValue
         if (value == null) {
             throw new MargasException("Identifier definition not found at path '%s' in section '%s'.".formatted(path, section.getCurrentPath()));
         }
-        final String[] split = value.split(":", IDENTIFIER_PARTS);
-        if (split.length != IDENTIFIER_PARTS) {
-            throw new MargasException("Invalid identifier definition at path '%s': '%s'".formatted(path, value));
-        }
         try {
-            return new Identifier<>(type, split[1]);
+            return new Identifier<>(type, value);
         } catch (final IllegalArgumentException e) {
             throw new MargasException("Invalid identifier definition at path '%s': '%s'".formatted(path, value), e);
         }
