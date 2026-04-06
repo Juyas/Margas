@@ -52,7 +52,7 @@ public class MargasPlugin extends JavaPlugin {
             try {
                 elementManager.loadConfiguration(sectionEntry.getValue());
             } catch (final MargasException e) {
-                getLogger().log(Level.SEVERE, "Error while loading file '%s'.".formatted(sectionEntry.getKey()), e);
+                getLogger().log(Level.SEVERE, "Error while loading file '%s'.%n => %s".formatted(sectionEntry.getKey(), e.getMessage()), e);
             }
         }
         elementManager.printInfo(getLogger());
