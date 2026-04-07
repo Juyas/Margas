@@ -6,18 +6,18 @@ import de.juyas.margas.api.MargasType;
 import de.juyas.margas.api.config.ConfigSectionReader;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.api.loot.MargasChest;
+import de.juyas.margas.api.loot.MargasItem;
 import de.juyas.margas.api.loot.MargasKey;
 import de.juyas.margas.api.loot.MargasLootTable;
 import de.juyas.margas.api.manager.MargasManager;
 import de.juyas.margas.config.DefaultValueProvider;
 import de.juyas.margas.config.parser.EnumReader;
 import de.juyas.margas.config.parser.IdentifierListReader;
-import de.juyas.margas.config.parser.IdentifierReader;
+import de.juyas.margas.config.parser.InlineWrapperReader;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Class MargasChestReader to read a margas chest from a configuration section.
@@ -45,39 +45,42 @@ public class MargasChestReader implements ConfigSectionReader<MargasChest> {
     private final MargasManager<MargasLootTable> lootTableManager;
 
     /**
+     * The margas item manager.
+     */
+    private final MargasManager<MargasItem> itemManager;
+
+    /**
      * Creates a new instance of MargasChestReader.
      *
      * @param lootTableManager the margas loot table manager
+     * @param itemManager      the margas item manager
      */
-    public MargasChestReader(final MargasManager<MargasLootTable> lootTableManager) {
+    public MargasChestReader(final MargasManager<MargasLootTable> lootTableManager, final MargasManager<MargasItem> itemManager) {
         super();
         this.lootTableManager = lootTableManager;
+        this.itemManager = itemManager;
     }
 
     @Override
     public ValueProvider<MargasChest> read(final ConfigurationSection section, final String path) throws MargasException {
         if (!section.isConfigurationSection(path)) {
-            throw new MargasException("Invalid margas chest definition in section '%s' at path '%s'.".formatted(section.getCurrentPath(), path));
+            throw new MargasException("Chest in section '%s' has no section '%s'.".formatted(section.getCurrentPath(), path));
         }
         final ConfigurationSection chestSection = section.getConfigurationSection(path);
         if (chestSection == null) {
-            throw new MargasException("Missing margas chest definition in section '%s' at path '%s'.".formatted(section.getCurrentPath(), path));
+            throw new MargasException("Chest in section '%s' is missing '%s'.".formatted(section.getCurrentPath(), path));
         }
 
         final EnumReader<Material> chestTypeReader = new EnumReader<>(Material.class);
-        final IdentifierReader<MargasLootTable> tableReader = new IdentifierReader<>(MargasType.LOOT_TABLE);
+        final InlineWrapperReader<MargasLootTable> tableReader = new InlineWrapperReader<>(MargasType.LOOT_TABLE, new MargasLootTableReader(lootTableManager, itemManager), lootTableManager);
         final IdentifierListReader<MargasKey> keyReader = new IdentifierListReader<>(MargasType.CHEST_KEY);
 
         final ChestIdentifier identifier = new ChestIdentifier(chestSection.getName());
-        final Material chestType = chestTypeReader.read(chestSection, FIELD_CHEST_TYPE);
+        final Material chestType = chestSection.contains(FIELD_CHEST_TYPE) ? chestTypeReader.read(chestSection, FIELD_CHEST_TYPE) : Material.CHEST;
         final List<MargasIdentifier<MargasKey>> keys = keyReader.read(chestSection, FIELD_KEY_LIST);
-        final MargasIdentifier<MargasLootTable> table = tableReader.read(chestSection, FIELD_LOOT_TABLE);
-        final Optional<ValueProvider<MargasLootTable>> margasLootTable = lootTableManager.get(table);
-        if (margasLootTable.isEmpty()) {
-            throw new MargasException("Invalid loot table definition in section '%s' at path '%s'. Identifier '%s' not found.".formatted(section.getCurrentPath(), path + "." + FIELD_LOOT_TABLE, table.full()));
-        }
+        final ValueProvider<MargasLootTable> table = tableReader.read(chestSection, FIELD_LOOT_TABLE);
 
-        return new DefaultValueProvider<>(useDefault -> new DefaultMargasChest(identifier, chestType, margasLootTable.get().generate(useDefault), keys), false);
+        return new DefaultValueProvider<>(useDefault -> new DefaultMargasChest(identifier, chestType, table.generate(useDefault), keys), false);
     }
 
     private record DefaultMargasChest(ChestIdentifier identifier, Material type,
