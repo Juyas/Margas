@@ -35,7 +35,7 @@ public class MargasElementManager {
         final BulkLoadingManager<MargasKey> chestKeyManager = new BulkLoadingManager<>(MargasType.CHEST_KEY, manager -> new MargasKeyReader());
         final BulkLoadingManager<MargasItem> itemManager = new BulkLoadingManager<>(MargasType.ITEM, manager -> new MargasItemReader());
         final BulkLoadingManager<MargasLootTable> lootTableManager = new BulkLoadingManager<>(MargasType.LOOT_TABLE, manager -> new MargasLootTableReader(manager, itemManager));
-        final BulkLoadingManager<MargasChest> chestManager = new BulkLoadingManager<>(MargasType.CHEST, manager -> new MargasChestReader(lootTableManager));
+        final BulkLoadingManager<MargasChest> chestManager = new BulkLoadingManager<>(MargasType.CHEST, manager -> new MargasChestReader(lootTableManager, itemManager));
         final BulkLoadingManager<MargasCreatureEffect> creatureEffectManager = new BulkLoadingManager<>(MargasType.CREATURE_EFFECT, manager -> new MargasCreatureEffectReader());
         final BulkLoadingManager<MargasCreatureAttributeModifier> attributeModifierManager = new BulkLoadingManager<>(MargasType.CREATURE_ATTRIBUTE, manager -> new MargasCreatureAttributeModifierReader());
         final BulkLoadingManager<MargasCreature> creatureManager = new BulkLoadingManager<>(MargasType.CREATURE, manager -> new MargasCreatureReader(creatureEffectManager, attributeModifierManager, lootTableManager, itemManager));
