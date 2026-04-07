@@ -4,6 +4,7 @@ import de.juyas.margas.api.MargasException;
 import de.juyas.margas.api.MargasIdentifier;
 import de.juyas.margas.api.MargasType;
 import de.juyas.margas.api.config.ConfigSectionReader;
+import de.juyas.margas.api.config.ConfigValueReader;
 import de.juyas.margas.api.config.ValueProvider;
 import de.juyas.margas.api.creature.MargasCreature;
 import de.juyas.margas.api.creature.MargasCreatureAttributeModifier;
@@ -12,10 +13,7 @@ import de.juyas.margas.api.loot.MargasItem;
 import de.juyas.margas.api.loot.MargasLootTable;
 import de.juyas.margas.api.manager.MargasManager;
 import de.juyas.margas.config.DefaultValueProvider;
-import de.juyas.margas.config.parser.EnumReader;
-import de.juyas.margas.config.parser.InlineWrapperReader;
-import de.juyas.margas.config.parser.SectionListReader;
-import de.juyas.margas.config.parser.SectionMappedListReader;
+import de.juyas.margas.config.parser.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -114,7 +112,7 @@ public class MargasCreatureReader implements ConfigSectionReader<MargasCreature>
         final EnumReader<EntityType> typeReader = new EnumReader<>(EntityType.class);
         final SectionListReader<MargasCreatureAttributeModifier> attributeModifierReader = new SectionListReader<>(
                 new InlineWrapperReader<>(MargasType.CREATURE_ATTRIBUTE, new MargasCreatureAttributeModifierReader(), creatureAttributeModifierManager));
-        final SectionListReader<MargasCreatureEffect> creatureEffectReader = new SectionListReader<>(new InlineWrapperReader<>(MargasType.CREATURE_EFFECT, new MargasCreatureEffectReader(), creatureEffectManager));
+        final FallbackParser<ValueProvider<List<MargasCreatureEffect>>> creatureEffectReader = getCreatureEffectReader(creatureEffectManager);
         final InlineWrapperReader<MargasLootTable> lootTableReader = new InlineWrapperReader<>(MargasType.LOOT_TABLE, new MargasLootTableReader(lootTableManager, itemManager), lootTableManager);
         final SectionMappedListReader<MargasLootTable> lootTablesReader = new SectionMappedListReader<>(lootTableReader);
         final SectionMappedListReader<MargasItem> equipmentReader = new SectionMappedListReader<>(new InlineWrapperReader<>(MargasType.ITEM, new MargasItemReader(), itemManager));
@@ -131,6 +129,23 @@ public class MargasCreatureReader implements ConfigSectionReader<MargasCreature>
 
         return new DefaultValueProvider<>(useDefault -> new DefaultCreature(creatureIdentifier, entityType,
                 effects.generate(useDefault), equipment.generate(useDefault), defaultLootTable.generate(useDefault), lootTables.generate(useDefault), attributeModifiers.generate(useDefault)), false);
+    }
+
+    private FallbackParser<ValueProvider<List<MargasCreatureEffect>>> getCreatureEffectReader(final MargasManager<MargasCreatureEffect> creatureEffectManager) {
+        final ConfigValueReader<ValueProvider<List<MargasCreatureEffect>>> sectionListReader = new SectionListReader<>(new InlineWrapperReader<>(MargasType.CREATURE_EFFECT, new MargasCreatureEffectReader(), creatureEffectManager));
+        final ConfigValueReader<ValueProvider<List<MargasCreatureEffect>>> identifierList = new IdentifierListReader<>(MargasType.CREATURE_EFFECT).map(this::mapperFunction);
+        return new FallbackParser<>(sectionListReader, identifierList, "Could not parse creature effects. Invalid list format.");
+    }
+
+    private ValueProvider<List<MargasCreatureEffect>> mapperFunction(final List<MargasIdentifier<MargasCreatureEffect>> identifierList) {
+        return new DefaultValueProvider<>(useDefault -> {
+            final List<MargasCreatureEffect> list = new ArrayList<>();
+            for (final ValueProvider<MargasCreatureEffect> provider : creatureEffectManager.get(identifierList)) {
+                final MargasCreatureEffect generate = provider.generate(useDefault);
+                list.add(generate);
+            }
+            return list;
+        }, false);
     }
 
     private <E extends Enum<E>, T> ValueProvider<Map<E, T>> polishList(final Class<E> enumClass, final ValueProvider<List<Map.Entry<String, T>>> lootTableEntries) {
