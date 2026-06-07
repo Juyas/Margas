@@ -46,13 +46,12 @@ public class IdentifierListReader<T extends MargasElement<T>> implements ConfigV
         final List<MargasIdentifier<T>> identifiers = new ArrayList<>(valueList.size());
         for (final String value : valueList) {
             final String[] split = value.split(":", IDENTIFIER_PARTS);
-            if (split.length != IDENTIFIER_PARTS) {
+            final String type = split.length == IDENTIFIER_PARTS ? split[0] : this.type.name();
+            final String identifier = split.length == IDENTIFIER_PARTS ? split[1] : split[0];
+            if (!this.type.name().equalsIgnoreCase(type)) {
                 throw new MargasException("Invalid identifier definition in list at path '%s': '%s'".formatted(path, valueList));
             }
-            if (!type.name().equalsIgnoreCase(split[0])) {
-                throw new MargasException("Invalid identifier definition in list at path '%s': '%s'".formatted(path, valueList));
-            }
-            identifiers.add(new Identifier<>(type, split[1]));
+            identifiers.add(new Identifier<>(this.type, identifier));
 
         }
         return identifiers;
