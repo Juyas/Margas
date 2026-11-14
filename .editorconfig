@@ -7,12 +7,12 @@ insert_final_newline = true
 indent_style = space
 indent_size = 2
 
-[{LICENSE,mvnw, mvnw.cmd,/.idea/**}]
+[{LICENSE,mvnw,mvnw.cmd,/.idea/**}]
 insert_final_newline = unset
 indent_style = unset
 indent_size = unset
 
-[CHANGELOG.md]
+[{CHANGELOG.md,*-CHANGELOG.md,*_CHANGELOG.md}]
 indent_size = 4
 
 [*.java]
